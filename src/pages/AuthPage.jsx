@@ -1,8 +1,8 @@
-import axios from "axios"
-import { useEffect, useState } from "react"
-import { Row, Col, Form, Button, Modal, Container, Image } from "react-bootstrap"
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from "firebase/auth"
+import { useContext, useEffect, useState } from "react"
+import { Button, Col, Container, Form, Image, Modal, Row } from "react-bootstrap"
 import { useNavigate } from "react-router-dom"
-import useLocalStorage from "use-local-storage"
+import { AuthContext } from "../features/orders/orderSlice"
 
 export default function AuthPage() {
 
@@ -10,17 +10,16 @@ export default function AuthPage() {
     const handleClose = () => setShow(false)
     const handleShow = () => setShow(true)
     const loginImage = 'https://res.cloudinary.com/duocpeihb/image/upload/v1730853747/WhatsApp_Image_2024-11-06_at_7.41.51_AM_zkmeqp.jpg'
-    const url = 'https://a3041d7d-19a7-4dcb-b062-dfd5ae5b9df5-00-250g6lisrt9.sisko.replit.dev'
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-    const [authToken, setAuthToken] = useLocalStorage('authToken', '')
-    const navigate = useNavigate()
 
+    const navigate = useNavigate()
+    const auth = getAuth()
+    const { currentUser } = useContext(AuthContext)
     useEffect(() => {
-        if (authToken) {
-            navigate("/home")
-        }
-    }, [authToken, navigate])
+        if (currentUser) navigate('/home')
+    }, [currentUser, navigate])
+
 
 
 
@@ -28,8 +27,8 @@ export default function AuthPage() {
     const handleSignup = async (e) => {
         e.preventDefault()
         try {
-            const res = await axios.post(`${url}/signup`, { username, password })
-            console.log(res.data)
+            const res = await createUserWithEmailAndPassword(auth, username, password)
+            console.log(res.user)
         } catch (error) {
             console.error(error)
         }
@@ -38,12 +37,9 @@ export default function AuthPage() {
     const handleLogin = async (e) => {
         e.preventDefault()
         try {
-            const res = await axios.post(`${url}/login`, { username, password })
-            if (res.data && res.data.auth === true && res.data.token) {
-                setAuthToken(res.data.token)
-                console.log('token saved')
-                alert('logged in')
-            }
+            signInWithEmailAndPassword(auth, username, password)
+
+
 
         } catch (error) {
             console.error(error)

@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { createContext } from "react";
 
 
 
@@ -45,3 +46,4 @@ const orderSlice = createSlice({
 
 export const { addToCart, deleteItem, updateOrder } = orderSlice.actions
 export default orderSlice.reducer
+export const AuthContext = createContext()

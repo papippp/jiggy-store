@@ -1,4 +1,4 @@
-import { Button, Card, Col, Container, Row } from "react-bootstrap";
+import { Button, Card, Col, Container, Form, ListGroup, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import OrderPageBody from "../components/OrderPageBody";
 import { deleteItem, updateOrder } from "../features/orders/orderSlice";
@@ -38,36 +38,71 @@ export default function OrdersPage() {
                     <h2>Your Cart :</h2>
 
                     {orderss.length > 0 && orderss.map((order) => (
-                        <Col sm={6} key={order.id}>
-                            <Card>
-                                <Card.Body style={{ color: 'lightblue' }}>
-                                    <OrderPageBody order={order} />
-                                    <Button className="mx-3" variant="secondary" onClick={() => handleIncrease(order.id)}>
-                                        <i className="bi bi-plus"></i>
-                                    </Button>
-                                    <Button className="mx-3" variant="secondary" onClick={() => handleDecrease(order.id)}>
-                                        <i className="bi bi-dash"></i>
-                                    </Button>
+                        <Col key={order.id}>
 
-                                </Card.Body>
 
-                            </Card>
+                            <OrderPageBody order={order} />
+                            <Button className="mx-3" variant="secondary" onClick={() => handleIncrease(order.id)}>
+                                <i className="bi bi-plus"></i>
+                            </Button>
+                            <Button className="mx-3" variant="secondary" onClick={() => handleDecrease(order.id)}>
+                                <i className="bi bi-dash"></i>
+                            </Button>
+
+
 
                         </Col>
                     ))}
-                    <br />
-                    <Col>
-                        <h4 style={{ fontSize: '30' }}>Total : NGN{subtotal}</h4>
-                    </Col>
-
-
-
 
 
                 </Container>
+
+                <h4 style={{ fontSize: '30' }}>Total : NGN{subtotal}</h4>
+
             </Col>
+
             <Col sm={6}>
-                <p>About us</p>
+
+                <Col sm={6}>
+                    <Form>
+                        <Form.Group>
+                            <Form.Control
+                                placeholder="name"
+                            />
+                        </Form.Group>
+                        <Form.Group>
+                            <Form.Control
+                                placeholder="card details"
+                            />
+                        </Form.Group>
+                        <Button>Pay</Button>
+                    </Form>
+                </Col>
+                <br />
+                <Col className="align-items-end" >
+
+
+                    <Card className="mb-4">
+                        <Card.Img
+                            variant="top"
+                            src="https://res.cloudinary.com/duocpeihb/image/upload/v1730853747/WhatsApp_Image_2024-11-06_at_7.41.51_AM_zkmeqp.jpg"
+                            className="img-fluid"
+                            style={{ height: '300px', objectFit: 'cover' }}
+                        />
+                        <Card.Body>
+                            <Card.Title>Jiggy Store</Card.Title>
+                            <Card.Text>
+                                <p>Thanks for your patronage with us</p>
+                            </Card.Text>
+                        </Card.Body>
+                        <ListGroup className="list-group-flush">
+                            <ListGroup.Item>Address: 1 pedro street Lekki </ListGroup.Item>
+                            <ListGroup.Item>Contact: jiggy@ppp.com</ListGroup.Item>
+
+                        </ListGroup>
+                    </Card>
+                </Col>
+
             </Col>
         </Row>
     )

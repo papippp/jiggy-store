@@ -5,6 +5,7 @@ import HomePage from "./pages/HomePage"
 import OrdersPage from "./pages/OrdersPage"
 import store from "./store"
 import './App.css'
+import { AuthProvider } from "./components/AuthProvider"
 
 function App() {
 
@@ -13,18 +14,20 @@ function App() {
 
 
   return (
-    <Provider store={store}>
-      <BrowserRouter>
+    <AuthProvider>
+      <Provider store={store}>
+        <BrowserRouter>
 
-        <Routes>
-          <Route path="/home" element={<HomePage />} />
-          <Route path="/login" element={<AuthPage />} />
-          <Route path="*" element={<AuthPage />} />
-          <Route path="/orders" element={<OrdersPage />} />
-        </Routes>
+          <Routes>
+            <Route path="/home" element={<HomePage />} />
+            <Route path="/login" element={<AuthPage />} />
+            <Route path="*" element={<AuthPage />} />
+            <Route path="/orders" element={<OrdersPage />} />
+          </Routes>
 
-      </BrowserRouter>
-    </Provider>
+        </BrowserRouter>
+      </Provider>
+    </AuthProvider>
   )
 }
 

@@ -1,20 +1,22 @@
-import { useEffect } from 'react'
+import { getAuth } from 'firebase/auth'
+import { useContext, useEffect } from 'react'
 import { Badge, Button, Container, Nav, Navbar, Row } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
-import useLocalStorage from 'use-local-storage'
 import ProfileMianBody from '../components/ProfileMianBody'
+import { AuthContext } from '../features/orders/orderSlice'
 
 export default function HomePage() {
-    const [authToken, setAuthToken] = useLocalStorage('authToken')
+    const auth = getAuth()
     const navigate = useNavigate()
+    const { currentUser } = useContext(AuthContext)
     useEffect(() => {
-        if (!authToken) {
+        if (!currentUser) {
             navigate("/login")
         }
     })
     const handleLogout = () => {
-        setAuthToken('')
+        auth.signOut()
     }
 
     const orders = useSelector((state) => state.orders.orders)
