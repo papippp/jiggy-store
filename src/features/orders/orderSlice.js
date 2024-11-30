@@ -34,11 +34,9 @@ const orderSlice = createSlice({
         , deleteItem: (state, action) => {
             const itemIndex = state.orders.findIndex((item) => item.id === action.payload.id)
             if (itemIndex >= 0) {
-                if (state.orders[itemIndex].qty > 1) {
-                    state.orders[itemIndex].qty -= 1
-                } else {
-                    state.orders.splice(itemIndex, 1)
-                }
+
+                state.orders.splice(itemIndex, 1)
+
             }
         }
     }
