@@ -6,12 +6,12 @@ import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyAAOd-8qRiBL5e6XXmwOEPv0pFFqYKz7z8",
-  authDomain: "jiggystore-b7849.firebaseapp.com",
-  projectId: "jiggystore-b7849",
-  storageBucket: "jiggystore-b7849.firebasestorage.app",
-  messagingSenderId: "717350021374",
-  appId: "1:717350021374:web:2f5b984750dc0186c6ddaf"
+  apiKey: import.meta.env.VITE_API_KEY,
+  authDomain: import.meta.env.VITE_API_KEY,
+  projectId: import.meta.env.VITE_API_KEY,
+  storageBucket: import.meta.env.VITE_API_KEY,
+  messagingSenderId: import.meta.env.VITE_API_KEY,
+  appId: import.meta.env.VITE_API_KEY
 };
 
 // Initialize Firebase
