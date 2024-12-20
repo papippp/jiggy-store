@@ -1,8 +1,8 @@
 import { Button, Card, Col, Container, ListGroup, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import OrderPageBody from "../components/OrderPageBody";
-
 import { deleteItem, updateOrder } from "../features/orders/orderSlice";
+
 
 
 export default function OrdersPage() {
@@ -31,6 +31,10 @@ export default function OrdersPage() {
 
 
 
+
+
+
+
     return (
         <Row>
             <Col className="mb-3" sm={6}>
@@ -43,12 +47,14 @@ export default function OrdersPage() {
 
 
                             <OrderPageBody order={order} />
+
                             <Button className="mx-3" variant="secondary" onClick={() => handleIncrease(order.id)}>
                                 <i className="bi bi-plus"></i>
                             </Button>
                             <Button className="mx-3" variant="secondary" onClick={() => handleDecrease(order.id)}>
                                 <i className="bi bi-dash"></i>
                             </Button>
+
 
 
 

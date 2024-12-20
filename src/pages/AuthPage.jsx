@@ -35,16 +35,23 @@ export default function AuthPage() {
     }
 
     const handleLogin = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
         try {
-            signInWithEmailAndPassword(auth, username, password)
+            // Attempt to sign in the user
+            await signInWithEmailAndPassword(auth, username, password);
 
-
+            // If successful, proceed (you can add a redirect or other actions here)
+            alert('Login successful');
 
         } catch (error) {
+            alert('incorrect info')
             console.error(error)
+
         }
-    }
+    };
+
+
+
 
 
     return (
@@ -64,11 +71,11 @@ export default function AuthPage() {
 
                 <Col sm={4}>
                     <Container>
-                        <h1 className="my-3">Welcome , Login here</h1>
+                        <h1 className="my-3">Welcome  Login here</h1>
                         <Form onSubmit={handleLogin}>
                             <Form.Group className="mb-3">
                                 <Form.Control
-                                    placeholder="enter username"
+                                    placeholder="enter email"
                                     type="text"
                                     onChange={(e) => setUsername(e.target.value)}
                                 />
@@ -88,14 +95,15 @@ export default function AuthPage() {
                 </Col>
                 <p className="mt-5" style={{ fontWeight: 'bold' }}>
                     Create a new account here
-                </p>
-                <Button className="rounded-pill" variant="outline-primary" onClick={handleShow}>SignUp</Button>
+                </p>/
+                <Button className="rounded-pill m-2" variant="outline-primary" onClick={handleShow}>Sign up with email</Button>
+
                 <Modal show={show} onHide={handleClose} >
                     <Modal.Body>
                         <Form>
                             <Form.Group className="mb-3">
                                 <Form.Control
-                                    placeholder="enter username"
+                                    placeholder="enter email"
                                     type="text"
                                     onChange={(e) => setUsername(e.target.value)}
                                 />

@@ -3,13 +3,16 @@ import { useDispatch } from "react-redux";
 import { addToCart } from "../features/orders/orderSlice";
 
 
+
 export default function AddOrder({ order }) {
     const dispatch = useDispatch()
 
 
+
     function addItem() {
 
-        return dispatch(addToCart(order))
+        dispatch(addToCart(order))
+        alert('added')
 
     }
 
@@ -29,6 +32,7 @@ export default function AddOrder({ order }) {
                     {order.description}
                     <br />
                     price : {order.amount}
+
                 </Card.Text>
                 <Button onClick={addItem} variant="primary">Add to cart</Button>
             </Card.Body>
