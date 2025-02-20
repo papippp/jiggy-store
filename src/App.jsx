@@ -6,20 +6,26 @@ import OrdersPage from "./pages/OrdersPage"
 import store from "./store"
 import './App.css'
 import { AuthProvider } from "./components/AuthProvider"
+import ValidateLogin from "./components/ValidateLogin"
+
 
 function App() {
 
 
 
 
-
   return (
-    <AuthProvider>
+
+    <AuthProvider >
       <Provider store={store}>
         <BrowserRouter>
 
           <Routes>
-            <Route path="/home" element={<HomePage />} />
+            <Route path="/home" element={
+              <ValidateLogin>
+                <HomePage />
+              </ValidateLogin>}
+            />
             <Route path="/login" element={<AuthPage />} />
             <Route path="*" element={<AuthPage />} />
             <Route path="/orders" element={<OrdersPage />} />
@@ -28,6 +34,7 @@ function App() {
         </BrowserRouter>
       </Provider>
     </AuthProvider>
+
   )
 }
 

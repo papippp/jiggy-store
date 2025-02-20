@@ -2,7 +2,9 @@ import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } f
 import { useContext, useEffect, useState } from "react"
 import { Button, Col, Container, Form, Image, Modal, Row } from "react-bootstrap"
 import { useNavigate } from "react-router-dom"
-import { AuthContext } from "../features/orders/orderSlice"
+import { AuthContext, setUserEmail } from "../features/orders/orderSlice"
+import { useDispatch } from "react-redux"
+
 
 export default function AuthPage() {
 
@@ -12,7 +14,7 @@ export default function AuthPage() {
     const loginImage = 'https://res.cloudinary.com/duocpeihb/image/upload/v1730853747/WhatsApp_Image_2024-11-06_at_7.41.51_AM_zkmeqp.jpg'
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-
+    const dispatch = useDispatch()
     const navigate = useNavigate()
     const auth = getAuth()
     const { currentUser } = useContext(AuthContext)
@@ -38,10 +40,14 @@ export default function AuthPage() {
         e.preventDefault();
         try {
             // Attempt to sign in the user
+
             await signInWithEmailAndPassword(auth, username, password);
 
             // If successful, proceed (you can add a redirect or other actions here)
             alert('Login successful');
+            const currenUser = auth.currentUser
+            dispatch(setUserEmail(currenUser.email))
+
 
         } catch (error) {
             alert('incorrect info')
@@ -55,75 +61,77 @@ export default function AuthPage() {
 
 
     return (
-        <Row>
-            <Col sm={6}>
-                <Container>
-                    <Col md={10}>
-                        <Image
-                            src={loginImage}
-                            fluid
-                            className="w-100"
-                        />
-                    </Col>
-                </Container>
-            </Col>
-            <Col sm={6}>
+        <Container className="py-5">
+            <Row className="d-flex align-items-center">
+                <Col sm={6}>
 
-                <Col sm={4}>
-                    <Container>
-                        <h1 className="my-3">Welcome  Login here</h1>
-                        <Form onSubmit={handleLogin}>
-                            <Form.Group className="mb-3">
-                                <Form.Control
-                                    placeholder="enter email"
-                                    type="text"
-                                    onChange={(e) => setUsername(e.target.value)}
-                                />
-                            </Form.Group>
-                            <Form.Group className="mb-3">
-                                <Form.Control
-                                    placeholder="enter password"
-                                    type="password"
-                                    onChange={(e) => setPassword(e.target.value)}
-                                />
-                            </Form.Group>
-                            <Button className="rounded-pill" variant="outline-danger" type="submit">Login</Button>
 
-                        </Form>
-                    </Container>
+                    <Image
+                        src={loginImage}
+                        fluid className="w-100 rounded-3"
+                    />
 
                 </Col>
-                <p className="mt-5" style={{ fontWeight: 'bold' }}>
-                    Create a new account here
-                </p>/
-                <Button className="rounded-pill m-2" variant="outline-primary" onClick={handleShow}>Sign up with email</Button>
+                <Col sm={6}>
 
-                <Modal show={show} onHide={handleClose} >
-                    <Modal.Body>
-                        <Form>
-                            <Form.Group className="mb-3">
-                                <Form.Control
-                                    placeholder="enter email"
-                                    type="text"
-                                    onChange={(e) => setUsername(e.target.value)}
-                                />
-                            </Form.Group>
-                            <Form.Group className="mb-3">
-                                <Form.Control
-                                    placeholder="enter password"
-                                    type="password"
-                                    onChange={(e) => setPassword(e.target.value)}
-                                />
-                            </Form.Group>
-                            <Button variant="primary" onClick={handleSignup}>Signup</Button>
-                            <p style={{ fontSize: '12px' }}>
-                                By signing up, you agree to the Terms of Service and Privacy Policy, including Cookie Use. PPP may use your contact information, including your email address and phone number for purposes outlined in our Privacy Policy, like keeping your account seceure and personalising our services, including ads. Learn more. Others will be able to find you by email or phone number, when provided, unless you choose otherwise here.
-                            </p>
-                        </Form>
-                    </Modal.Body>
-                </Modal>
+                    <Col sm={4}>
+                        <Container>
+                            <h1 className="my-3">Welcome  Login here</h1>
+                            <Form onSubmit={handleLogin}>
+                                <Form.Group className="mb-3">
+                                    <Form.Control
+                                        placeholder="enter email"
+                                        type="text"
+                                        onChange={(e) => setUsername(e.target.value)}
+                                    />
+                                </Form.Group>
+                                <Form.Group className="mb-3">
+                                    <Form.Control
+                                        placeholder="enter password"
+                                        type="password"
+                                        onChange={(e) => setPassword(e.target.value)}
+                                    />
+                                </Form.Group>
+                                <Button className="rounded-pill" variant="outline-danger" type="submit">Login</Button>
 
-            </Col>
-        </Row>
+                            </Form>
+                        </Container>
+
+                    </Col>
+                    <p className="mt-5" style={{ fontWeight: 'bold' }}>
+                        Create a new account here
+                    </p>
+                    <Button className="rounded-pill m-2" variant="outline-primary" onClick={handleShow}>Sign up with email</Button>
+                    <Container>
+
+                    </Container>
+                    <Modal show={show} onHide={handleClose} >
+                        <Modal.Body>
+                            <Form>
+                                <Form.Group className="mb-3">
+                                    <Form.Control
+                                        placeholder="enter email"
+                                        type="text"
+                                        onChange={(e) => setUsername(e.target.value)}
+                                    />
+                                </Form.Group>
+                                <Form.Group className="mb-3">
+                                    <Form.Control
+                                        placeholder="enter password"
+                                        type="password"
+                                        onChange={(e) => setPassword(e.target.value)}
+                                    />
+                                </Form.Group>
+                                <Button variant="primary" onClick={handleSignup}>Signup</Button>
+                                <p style={{ fontSize: '12px' }}>
+                                    By signing up, you agree to the Terms of Service and Privacy Policy, including Cookie Use. PPP may use your contact information, including your email address and phone number for purposes outlined in our Privacy Policy, like keeping your account seceure and personalising our services, including ads. Learn more. Others will be able to find you by email or phone number, when provided, unless you choose otherwise here.
+                                </p>
+                            </Form>
+                        </Modal.Body>
+                    </Modal>
+
+                </Col>
+            </Row>
+        </Container>
     )
 }

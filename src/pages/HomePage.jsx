@@ -1,15 +1,22 @@
 import { getAuth } from 'firebase/auth'
-import { useContext, useEffect } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Badge, Button, Container, Nav, Navbar, Row } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
+import CreateOrderModal from '../components/CreateOrderModal'
 import ProfileMianBody from '../components/ProfileMianBody'
 import { AuthContext } from '../features/orders/orderSlice'
 
 export default function HomePage() {
+    const [show, setShow] = useState(false)
+    const handleShow = () => setShow(true)
+    const handleClose = () => setShow(false)
+
     const auth = getAuth()
     const navigate = useNavigate()
     const { currentUser } = useContext(AuthContext)
+
+
     useEffect(() => {
         if (!currentUser) {
             navigate("/login")
@@ -19,10 +26,16 @@ export default function HomePage() {
         auth.signOut()
     }
 
+
+    const userEmail = useSelector((state) => state.orders.userEmail)
+    const allowedEmail = 'lukzy@p.com'
+
     const orders = useSelector((state) => state.orders.orders)
     const ordersCount = orders.reduce((accumulator, item) => {
         return accumulator + item.qty
     }, 0)
+
+
 
     return (
         <>
@@ -49,8 +62,21 @@ export default function HomePage() {
                         <p className='mb-0'>JIGGY WEARS</p>
 
                     </div>
+                    {userEmail === allowedEmail ? (
+                        <Button onClick={handleShow}>
+                            upload new product
+
+                        </Button>
+
+
+
+                    ) : (
+                        null
+                    )}
+
 
                     <Navbar.Collapse className="justify-content-end">
+
                         <Button variant="primary" onClick={handleLogout}>
                             Logout
                         </Button>
@@ -77,6 +103,7 @@ export default function HomePage() {
             <Row>
                 <Container className='my-3'>
                     <ProfileMianBody />
+                    <CreateOrderModal show={show} handleClose={handleClose} />
                 </Container>
             </Row>
 
