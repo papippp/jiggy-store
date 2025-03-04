@@ -39,21 +39,16 @@ export default function HomePage() {
 
     return (
         <>
-            <Navbar bg="light">
+            <Navbar bg="light" className="navbar-custom">
                 <Container className='d-flex justify-content-between align items-center'>
-                    <Navbar.Brand href="/" className='d-flex align-items-center'>
-                        <i
-                            className="bi bi-house"
-                            style={{ fontSize: 30, color: "orange" }}
-                        ></i>
-                    </Navbar.Brand>
+
                     <Nav className="d-flex justify-content-center align-items-center flex-grow-1">
-                        <Nav.Link as={Link} to={'/orders'} className='d-flex align-items-center me-3' >
+                        <Nav.Link as={Link} to={'/orders'} className='d-flex align-items-center me-3 nav-link-custom' >
                             <i className='bi bi-cart'></i>
                             <Badge className='ms-2' pill variant='primary'>{ordersCount}</Badge>
 
                         </Nav.Link>
-                        <Nav.Link as={Link} to={'https://wa.me/+2349132637858'} className='d-flex align-items-center'>
+                        <Nav.Link as={Link} to={'https://wa.me/+2349132637858'} className='d-flex align-items-center nav-link-custom'>
                             Contact us <i className='bi bi-whatsapp'></i>
 
                         </Nav.Link>
@@ -85,7 +80,7 @@ export default function HomePage() {
                 </Container>
             </Navbar>
             <Container>
-                <Navbar fixed='bottom'>
+                <Navbar fixed='bottom' className="footer-navbar">
                     <Container>
                         <Navbar.Collapse className="justify-content-end">
                             <Navbar.Text>

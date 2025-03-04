@@ -1,6 +1,8 @@
 import { Col, Container, Row } from 'react-bootstrap'
 import AddOrder from './AddOrder'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { useEffect } from 'react'
+import { fetchProduct } from '../features/orders/orderSlice'
 
 export default function ProfileMianBody() {
     // const orders = [
@@ -14,22 +16,33 @@ export default function ProfileMianBody() {
     //{ id: 8, name: 'top boy boot ', description: 'Jiggy topboy jean', amount: 200, pic: 'https://res.cloudinary.com/dqcztgs4v/image/upload/WhatsApp_Image_2024-11-30_at_1.20.39_AM_h23yhj.jpg' }
 
     //]
-    const orders = useSelector(state => state.orders.products)
+    const orders = useSelector((state) => state.orders.products)
+    const dispatch = useDispatch()
+    useEffect(() => {
+        dispatch(fetchProduct())
+
+    }, [dispatch]);
 
 
 
     return (
-        <Container>
+        <Container className="profile-main-container">
             <Row>
-
                 {
-                    orders.map((order, index) => (
+                    orders.length === 0 ? (
+                        <Col>No orders found </Col>
+                    ) :
 
-                        <Col sm={3} key={order.id}>
 
-                            <AddOrder key={index} order={order} />
-                        </Col>
-                    ))
+                        (
+                            orders.map((order, index) => (
+
+                                <Col sm={3} key={order.id} className="order-col">
+
+                                    <AddOrder key={index} order={order} />
+                                </Col>
+                            ))
+                        )
                 }
 
 

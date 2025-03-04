@@ -1,59 +1,56 @@
-import { useState } from 'react'
-import { useDispatch } from "react-redux";
-import { Button, Col, Form, Image, Modal, Row } from "react-bootstrap"
-import { createProduct } from '../features/orders/orderSlice';
+import { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { updateProduct } from '../features/orders/orderSlice'
+import { Button, Col, Form, Image, Modal, Row } from 'react-bootstrap'
 
-
-export default function CreateOrderModal({ show, handleClose }) {
-    const [name, setName] = useState('')
-    const [description, setDescription] = useState('')
-    const [amount, setAmount] = useState('')
-    const [pic, setPic] = useState('')
-    const [backpic, setBackPic] = useState('')
-    const [invalidurl, setInvalidurl] = useState(false)
-
-
+export default function UpdateProduct({ product, show, handleClose }) {
     const dispatch = useDispatch()
+    const [name, setName] = useState(product.name)
+    const [description, setDescription] = useState(product.description)
+    const [amount, setAmount] = useState(product.amount)
+    const [pic, Setpic] = useState(product.pic)
+    const [backpic, setBackPic] = useState(product.backpic)
+
+    useEffect(() => {
+        if (product) {
+            setName(product.name)
+            setDescription(product.description)
+            setAmount(product.amount)
+            Setpic(product.pic)
+            setBackPic(product.backpic)
+        }
+    }, [product])
 
 
-    const handleSubmit = (e) => {
+    const handleUpdate = (e) => {
         e.preventDefault()
-        if (name, description, amount, pic, backpic) {
-            dispatch(createProduct({ name, description, amount, pic, backpic }))
-            setName('')
-            setDescription('')
-            setAmount('')
-            setPic('')
-            setBackPic('')
+        if (name && description && amount && pic && backpic) {
+            dispatch(updateProduct({ id: product.id, name, description, amount, pic, backpic }))
             handleClose()
         }
         else {
-            setInvalidurl(true)
+            handleClose()
         }
 
+
+
+
+
     }
 
-    const handleImageError = () => {
-        setInvalidurl(true)
-    }
-
-    const handleImageLoad = () => {
-        setInvalidurl(false)
-    }
     return (
         <Modal show={show} onHide={handleClose}>
             <Modal.Header>
-                <Modal.Title>Create new Product</Modal.Title>
+                <Modal.Title>update Product</Modal.Title>
             </Modal.Header>
-            <Form onSubmit={handleSubmit}>
+            <Form onSubmit={handleUpdate}>
                 <Modal.Body>
                     <Row>
                         <Col sm={7} style={{ margin: '0px' }}>
                             <Image
                                 src={pic ? pic : ''}
                                 alt='upload content'
-                                onError={handleImageError}
-                                onLoad={handleImageLoad}
+
                                 style={{ width: '32px' }}
                             />
                         </Col>
@@ -67,24 +64,20 @@ export default function CreateOrderModal({ show, handleClose }) {
 
                             <Form.Control
                                 value={pic}
-                                onChange={(e) => setPic(e.target.value)}
+                                onChange={(e) => Setpic(e.target.value)}
                                 className='my-3'
-                                placeholder=' product picture front view'
+                                placeholder='input product front view'
                             />
+
                             <Form.Control
                                 value={backpic}
                                 onChange={(e) => setBackPic(e.target.value)}
                                 className='my-3'
-                                placeholder=' product picture back veiw'
+                                placeholder='input product back veiw'
                             />
-                            {invalidurl && (
-                                <div className='danger'>
-                                    Invalid picture url or failed to load picture
 
-                                </div>
-                            )
 
-                            }
+
 
                             <Form.Control
                                 value={description}
@@ -103,7 +96,7 @@ export default function CreateOrderModal({ show, handleClose }) {
                         </Col>
 
                         <Button type='submit' style={{ width: '100' }}>
-                            upload
+                            submit
                         </Button>
                     </Row>
 
@@ -112,8 +105,6 @@ export default function CreateOrderModal({ show, handleClose }) {
             </Form>
 
         </Modal>
-
-
-
     )
 }
+``

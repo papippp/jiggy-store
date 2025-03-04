@@ -22,19 +22,19 @@ export default function OrderPageBody({ order, handleIncrease, handleDecrease })
 
 
     return (
-        <Card className="mb-3">
+        <Card className="order-card mb-4 shadow-sm rounded">
             <Row className="align-items-center">
                 <Col xs={4} md={3}>
                     <Card.Img
                         variant="top"
                         src={order.pic}
                         alt={order.name}
-                        className="img-fluid"
+                        className="order-img"
                         style={{ objectFit: 'cover', height: '100px' }}
                     />
                 </Col>
-                <Col xs={8} md={6}>
-                    <Card.Title>{order.name}</Card.Title>
+                <Col xs={8} md={6} className="order-details">
+
                     <Card.Text>{order.name} x {order.qty}</Card.Text>
                     <Card.Text>{order.description}</Card.Text>
                     <Select
@@ -42,16 +42,16 @@ export default function OrderPageBody({ order, handleIncrease, handleDecrease })
                         onChange={(option) => setOptionPicked(option)}
                         value={optionPicked}
                     />
-                    <h5>Size: {optionPicked?.label || "Select size"}</h5>
+                    <h5 className="order-size">Size: {optionPicked?.label || "Select size"}</h5>
                 </Col>
-                <Col xs={12} md={3} className="text-center">
-                    <Button variant="outline-secondary" onClick={() => handleIncrease(order.id)} className="mx-1">
+                <Col xs={12} md={3} className="order-actions text-center">
+                    <Button variant="outline-secondary" onClick={() => handleIncrease(order.id)} className="mx-1 btn-custom">
                         <i className="bi bi-plus"></i>
                     </Button>
-                    <Button variant="outline-secondary" onClick={() => handleDecrease(order.id)} className="mx-1">
+                    <Button variant="outline-secondary" onClick={() => handleDecrease(order.id)} className="mx-1 btn-custom">
                         <i className="bi bi-dash"></i>
                     </Button>
-                    <Button variant="danger" onClick={deleteOrder} className="mt-2">
+                    <Button variant="danger" onClick={deleteOrder} className="mt-2 btn-delete">
                         <i className="bi bi-trash"></i> Remove
                     </Button>
 
