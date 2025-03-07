@@ -1,4 +1,4 @@
-import { Col, Container, Row } from 'react-bootstrap'
+import { Col, Container, Row, Spinner } from 'react-bootstrap'
 import AddOrder from './AddOrder'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
@@ -17,6 +17,7 @@ export default function ProfileMianBody() {
 
     //]
     const orders = useSelector((state) => state.orders.products)
+    const loader = useSelector((state) => state.orders.loading)
     const dispatch = useDispatch()
     useEffect(() => {
         dispatch(fetchProduct())
@@ -28,22 +29,25 @@ export default function ProfileMianBody() {
     return (
         <Container className="profile-main-container">
             <Row>
+
+                {loader && (<p>loading ...</p>) && (
+
+                    <Spinner animation="grow" variant="dark" />
+
+                )}
+
+
+
                 {
-                    orders.length === 0 ? (
-                        <Col>No orders found </Col>
-                    ) :
+                    orders.map((order, index) => (
 
+                        <Col sm={3} key={order.id} className="order-col">
 
-                        (
-                            orders.map((order, index) => (
-
-                                <Col sm={3} key={order.id} className="order-col">
-
-                                    <AddOrder key={index} order={order} />
-                                </Col>
-                            ))
-                        )
+                            <AddOrder key={index} order={order} />
+                        </Col>
+                    ))
                 }
+
 
 
             </Row>

@@ -40,18 +40,21 @@ export default function HomePage() {
     return (
         <>
             <Navbar bg="light" className="navbar-custom">
+                <Button variant="primary" onClick={handleLogout}>
+                    Logout
+                </Button>
                 <Container className='d-flex justify-content-between align items-center'>
 
                     <Nav className="d-flex justify-content-center align-items-center flex-grow-1">
+
+
                         <Nav.Link as={Link} to={'/orders'} className='d-flex align-items-center me-3 nav-link-custom' >
                             <i className='bi bi-cart'></i>
                             <Badge className='ms-2' pill variant='primary'>{ordersCount}</Badge>
 
                         </Nav.Link>
-                        <Nav.Link as={Link} to={'https://wa.me/+2349132637858'} className='d-flex align-items-center nav-link-custom'>
-                            Contact us <i className='bi bi-whatsapp'></i>
 
-                        </Nav.Link>
+
                     </Nav>
                     <div className='text-center flex-grow-1'>
                         <p className='mb-0'>JIGGY WEARS</p>
@@ -71,10 +74,12 @@ export default function HomePage() {
 
 
                     <Navbar.Collapse className="justify-content-end">
+                        <Nav.Link as={Link} to={'https://wa.me/+2349132637858'} className='d-flex align-items-center nav-link-custom'>
+                            Contact us <i className='bi bi-whatsapp'></i>
 
-                        <Button variant="primary" onClick={handleLogout}>
-                            Logout
-                        </Button>
+                        </Nav.Link>
+
+
                     </Navbar.Collapse>
 
                 </Container>

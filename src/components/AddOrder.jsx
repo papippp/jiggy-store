@@ -57,7 +57,7 @@ export default function AddOrder({ order }) {
                             src={order.pic}
                             alt={order.name}
                             className="img-fluid product-img"
-                            style={{ height: '200px', objectFit: 'cover' }}
+
                         />
 
                     </Carousel.Item>
@@ -68,7 +68,7 @@ export default function AddOrder({ order }) {
                             src={order.backpic}
                             alt={order.name}
                             className="img-fluid product-img"
-                            style={{ height: '200px', objectFit: 'cover' }}
+
                         />
 
                     </Carousel.Item>

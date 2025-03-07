@@ -1,10 +1,10 @@
-import { Button, Col, Container, Row, Modal, Navbar, Nav, Card, ListGroup, Table } from "react-bootstrap";
+import { useState } from "react";
+import { Button, Card, Col, Container, ListGroup, Modal, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import OrderPageBody from "../components/OrderPageBody";
 import { deleteItem, updateOrder } from "../features/orders/orderSlice";
-import { useState } from "react";
-import { Link } from "react-router-dom";
-//import { usePaystackPayment } from "react-paystack";
+
 
 export default function OrdersPage() {
     const orders = useSelector((state) => state.orders.orders);
@@ -42,18 +42,29 @@ export default function OrdersPage() {
         window.open(whatsappUrl, '_blank');
     };
 
+    const handlePaystackPayment = () => {
+        const handler = window.PaystackPop.setup({
+            key: "pk_test_b54ce5e374814df3d936a647db3b50c115092da4", // Replace with your Paystack public key
+            email: "customer@example.com", // Replace with the customer's email
+            amount: subtotal * 100, // Paystack expects the amount in kobo (100 kobo = 1 NGN)
+            currency: "NGN", // Currency to be used for the payment
+            ref: `order_${new Date().getTime()}`, // Unique reference for the transaction
+            callback: function (response) {
+                alert("Payment successful! Reference: " + response.reference);
+                // You can make a backend call to save the payment details here
+            },
+            onClose: function () {
+                alert("Payment process was canceled");
+            }
+        });
+
+        handler.openIframe();
+    };
+
+
     return (
         <>
-            {/* Navbar */}
-            <Navbar bg="dark" variant="dark" sticky="top">
-                <Container>
-                    <Navbar.Brand href="#home">Jiggy Store</Navbar.Brand>
-                    <Nav className="me-auto">
-                        <Nav.Link href="/home">Home</Nav.Link>
 
-                    </Nav>
-                </Container>
-            </Navbar>
 
             {/* Main Content */}
             <Container fluid className="vh-100 p-4 bg-light">
@@ -62,26 +73,16 @@ export default function OrdersPage() {
                     <Col sm={12} md={8} className="mb-5">
                         <h2 className="mb-4">Your Cart</h2>
                         {orders.length > 0 ? (
-                            <Table striped bordered hover responsive>
-                                <thead>
-                                    <tr>
-                                        <th>Product</th>
-                                        <th>Quantity</th>
-                                        <th>Price</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {orders.map((order) => (
-                                        <OrderPageBody
-                                            key={order.id}
-                                            order={order}
-                                            handleIncrease={handleIncrease}
-                                            handleDecrease={handleDecrease}
-                                        />
-                                    ))}
-                                </tbody>
-                            </Table>
+
+                            orders.map((order) => (
+                                <OrderPageBody
+                                    key={order.id}
+                                    order={order}
+                                    handleIncrease={handleIncrease}
+                                    handleDecrease={handleDecrease}
+                                />
+                            ))
+
                         ) : (
                             <p>Your cart is empty!</p>
                         )}
@@ -93,13 +94,7 @@ export default function OrdersPage() {
                         <Button variant="info" onClick={generateWhatsAppMessage} className="w-100 mb-3">
                             Send Cart via WhatsApp
                         </Button>
-                        <Button
-                            variant="primary"
-                            //onClick={() => initializePayment(onSuccess, onClose)}
-                            className="w-100"
-                        >
-                            Pay with Paystack
-                        </Button>
+
                     </Col>
 
                     {/* Store Info Section */}
@@ -119,8 +114,7 @@ export default function OrdersPage() {
                                     <ListGroup.Item>Contact: jiggy@ppp.com</ListGroup.Item>
                                 </ListGroup>
                                 <Button variant="outline-success" className="mt-3">
-                                    <Link to='/'> home</Link>
-
+                                    <Link to='/home'></Link>  home page
                                 </Button>
                             </Card.Body>
                         </Card>
@@ -135,16 +129,18 @@ export default function OrdersPage() {
                 </Modal.Header>
                 <Modal.Body>
                     <p>Please proceed to payment using the button below:</p>
-                    <Button href="https://buy.stripe.com/test_6oE0190xP9K7cBGdQQ" variant="primary" className="w-100">
-                        Pay Now
+                    <Button
+                        variant="primary"
+                        onClick={handlePaystackPayment}
+
+                        className="w-100"
+                    >
+                        Pay with Paystack
                     </Button>
                 </Modal.Body>
             </Modal>
 
-            {/* Footer */}
-            <footer className="bg-dark text-white text-center p-3">
-                <p className="mb-0">&copy; 2025 Jiggy Store. All rights reserved.</p>
-            </footer>
+
         </>
     );
 }
