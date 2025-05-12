@@ -1,113 +1,84 @@
-import { getAuth } from 'firebase/auth'
-import { useContext, useEffect, useState } from 'react'
-import { Badge, Button, Container, Nav, Navbar, Row } from 'react-bootstrap'
-import { useSelector } from 'react-redux'
-import { Link, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { Col, Container, Nav, Navbar, Row } from 'react-bootstrap'
+import { Link } from 'react-router-dom'
 import CreateOrderModal from '../components/CreateOrderModal'
+import NavBar from '../components/NavBar'
 import ProfileMianBody from '../components/ProfileMianBody'
-import { AuthContext } from '../features/orders/orderSlice'
 
 export default function HomePage() {
     const [show, setShow] = useState(false)
     const handleShow = () => setShow(true)
     const handleClose = () => setShow(false)
 
-    const auth = getAuth()
-    const navigate = useNavigate()
-    const { currentUser } = useContext(AuthContext)
 
 
-    useEffect(() => {
-        if (!currentUser) {
-            navigate("/login")
-        }
-    })
-    const handleLogout = () => {
-        auth.signOut()
-    }
 
-
-    const userEmail = useSelector((state) => state.orders.userEmail)
-    const allowedEmail = 'lukzy@p.com'
-
-    const orders = useSelector((state) => state.orders.orders)
-    const ordersCount = orders.reduce((accumulator, item) => {
-        return accumulator + item.qty
-    }, 0)
 
 
 
     return (
         <>
-            <Navbar bg="light" className="navbar-custom">
-                <Button variant="primary" onClick={handleLogout}>
-                    Logout
-                </Button>
-                <Container className='d-flex justify-content-between align items-center'>
 
-                    <Nav className="d-flex justify-content-center align-items-center flex-grow-1">
+            <div className='luxury-store'>
+                {/*Main Navigation*/}
+                <NavBar handleShow={handleShow} />
+                <Container fluid className='main-content'>
+                    <Row className='welcome-section'>
+                        <Col>
+                            <h1 className="welcome-heading">Welcome to Jiggy Wears</h1>
+                            <p className="welcome-subheading">Curated Luxury Apparel</p>
+                        </Col>
 
-
-                        <Nav.Link as={Link} to={'/orders'} className='d-flex align-items-center me-3 nav-link-custom' >
-                            <i className='bi bi-cart'></i>
-                            <Badge className='ms-2' pill variant='primary'>{ordersCount}</Badge>
-
-                        </Nav.Link>
-
-
-                    </Nav>
-                    <div className='text-center flex-grow-1'>
-                        <p className='mb-0'>JIGGY WEARS</p>
-
-                    </div>
-                    {userEmail === allowedEmail ? (
-                        <Button onClick={handleShow}>
-                            upload new product
-
-                        </Button>
-
-
-
-                    ) : (
-                        null
-                    )}
-
-
-                    <Navbar.Collapse className="justify-content-end">
-                        <Nav.Link as={Link} to={'https://wa.me/+2349132637858'} className='d-flex align-items-center nav-link-custom'>
-                            Contact us <i className='bi bi-whatsapp'></i>
-
-                        </Nav.Link>
-
-
-                    </Navbar.Collapse>
+                    </Row>
+                    <Row className="profile-section">
+                        <ProfileMianBody />
+                        <CreateOrderModal show={show} handleClose={handleClose} />
+                    </Row>
 
                 </Container>
-            </Navbar>
-            <Container>
-                <Navbar fixed='bottom' className="footer-navbar">
+                <Navbar expand='lg' className='footer-navbar'>
                     <Container>
-                        <Navbar.Collapse className="justify-content-end">
-                            <Navbar.Text>
-                                Built by: <a href="#login">$PPP</a>
-                            </Navbar.Text>
-                        </Navbar.Collapse>
+                        <Row>
+                            <Col lg={4} className="footer-col">
+                                <h5>About Us </h5>
+                                <p className="footer-text">
+                                    Crafting exceptional luxury apparel with meticulous attention to detail and timeless elegance.
+                                </p>
+                            </Col>
+                            <Col lg={4} className="footer-col">
+                                <h5>Quick Links</h5>
+                                <Nav className="flex-column">
+                                    <Nav.Link as={Link} to={'/home'} className="footer-link">Home</Nav.Link>
+                                    <Nav.Link as={Link} to={'/orders'} className="footer-link">Orders</Nav.Link>
+                                    <Nav.Link as={Link} to={'/Men'} className="footer-link">Men</Nav.Link>
+                                    <Nav.Link as={Link} to={'/Women'} className="footer-link">Women</Nav.Link>
+                                </Nav>
+                            </Col>
+                            <Col lg={4} className='footer-col'>
+                                <h5>Contact us</h5>
+                                <address className='footer-contact'>
+                                    <p><i className="bi bi-geo-alt"></i> 11 Yaba road,Lagos</p>
+                                    <p><i className="bi bi-telephone"></i> +234 (916) 281-7078</p>
+                                    <p><i className="bi bi-envelope"></i> jiggywears@ppp.com</p>
+
+                                </address>
+                            </Col>
+                        </Row>
+                        <Row className='w-100 footer-bottom'>
+                            <Col>
+                                <hr className="footer-divider" />
+                                <p className="footer-copyright">
+                                    &copy; {new Date().getFullYear()} JIGGY WEARS. All rights reserved.
+                                    <span className="float-end">Built by: <a href="#login" className="developer-link">$PPP</a></span>
+                                </p>
+                            </Col>
+
+                        </Row>
                     </Container>
+
                 </Navbar>
 
-            </Container>
-
-            <Container className="mt-3">
-                <h2>Welcome !</h2>
-            </Container>
-            <Row>
-                <Container className='my-3'>
-                    <ProfileMianBody />
-                    <CreateOrderModal show={show} handleClose={handleClose} />
-                </Container>
-            </Row>
-
-
+            </div>
 
         </>
     )

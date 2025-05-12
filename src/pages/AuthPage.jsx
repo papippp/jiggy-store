@@ -4,6 +4,7 @@ import { Button, Col, Container, Form, Image, Modal, Row } from "react-bootstrap
 import { useNavigate } from "react-router-dom"
 import { AuthContext, setUserEmail } from "../features/orders/orderSlice"
 import { useDispatch } from "react-redux"
+import NavBar from "../components/NavBar"
 
 
 export default function AuthPage() {
@@ -63,6 +64,7 @@ export default function AuthPage() {
     return (
         <Container className="py-5">
             <Row className="d-flex align-items-center">
+                <NavBar />
                 <Col sm={6}>
 
 
