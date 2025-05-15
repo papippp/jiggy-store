@@ -24,13 +24,14 @@ export const fetchProduct = createAsyncThunk(
 
 export const createProduct = createAsyncThunk(
     'product/create',
-    async ({ name, description, amount, pic, backpic }) => {
+    async ({ name, description, amount, pic, backpic, gender }) => {
         const data = {
             name: name,
             description: description,
             amount: amount,
             pic: pic,
-            backpic: backpic
+            backpic: backpic,
+            gender: gender
         }
 
         const response = await axios.post(`${BASE_URL}/product`, data)
@@ -76,7 +77,7 @@ export const deleteProduct = createAsyncThunk(
 const orderSlice = createSlice({
     name: 'orders',
     initialState: {
-        orders: [], products: [], userEmail: null, loading: true
+        orders: [], products: [], filteredProducts: [], userEmail: null, loading: true
     },
     reducers: {
         setUserEmail: (state, action) => {
@@ -84,18 +85,14 @@ const orderSlice = createSlice({
 
         }
 
-        , //createCart: (state, action) => {
-        //const newCart = {
-        // id: Date.now(),
-        //name: action.payload.name,
-        //description: action.payload.description,
-        //amount: action.payload.amount,
-        //pic: action.payload.pic,
-        //userEmail: state.userEmail
-
-        // }
-        //state.products.push(newCart)
-        //}
+        ,
+        filteredProductsByGender: (state, action) => {
+            const gender = action.payload
+            state.filteredProducts = state.products.filter(product =>
+                product.gender === gender || product.gender === 'unisex'
+            )
+        }
+        ,
 
         addToCart: (state, action) => {
             const itemIndex = state.orders.findIndex((item) => item.id === action.payload.id)
@@ -133,6 +130,7 @@ const orderSlice = createSlice({
         builder
             .addCase(fetchProduct.fulfilled, (state, action) => {
                 state.products = action.payload
+                state.filteredProducts = action.payload
                 state.loading = false
 
             })
@@ -156,6 +154,6 @@ const orderSlice = createSlice({
 
 })
 
-export const { addToCart, deleteItem, updateOrder, setUserEmail } = orderSlice.actions
+export const { addToCart, deleteItem, updateOrder, setUserEmail, filteredProductsByGender } = orderSlice.actions
 export default orderSlice.reducer
 export const AuthContext = createContext()

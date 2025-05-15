@@ -7,6 +7,8 @@ import store from "./store"
 import './App.css'
 import { AuthProvider } from "./components/AuthProvider"
 import ValidateLogin from "./components/ValidateLogin"
+import Men from "./pages/Men"
+import Women from "./pages/Women"
 
 
 function App() {
@@ -29,6 +31,8 @@ function App() {
             <Route path="/login" element={<AuthPage />} />
             <Route path="*" element={<AuthPage />} />
             <Route path="/orders" element={<OrdersPage />} />
+            <Route path="/men" element={<Men />} />
+            <Route path="/women" element={<Women />} />
           </Routes>
 
         </BrowserRouter>

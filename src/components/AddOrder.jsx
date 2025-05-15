@@ -1,127 +1,101 @@
-import { Button, Card, Carousel, Image } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
+import { Card, Button } from 'react-bootstrap'
 import { useState } from 'react'
-import { addToCart, deleteProduct } from "../features/orders/orderSlice";
-import UpdateProduct from "./UpdateProduct";
+import { useDispatch, useSelector } from 'react-redux'
+import { addToCart, deleteProduct } from '../features/orders/orderSlice'
+import UpdateProduct from './UpdateProduct'
 
-export default function AddOrder({ order }) {
+export default function AddOrder({ order, className }) {
     const dispatch = useDispatch()
     const userEmail = useSelector((state) => state.orders.userEmail)
     const allowedEmail = 'lukzy@p.com'
-    const [show, setShow] = useState(false)
-    const [index, setIndex] = useState(0)
+    const [showUpdateModal, setShowUpdateModal] = useState(false)
+    const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
-    const handleShow = () => setShow(true)
-    const handleClose = () => setShow(false)
-
-    const handleSelect = (selectedIndex) => {
-        setIndex(selectedIndex)
+    const handleAddToCart = () => {
+        dispatch(addToCart(order))
+        window.dispatchEvent(new CustomEvent('showNotification', {
+            detail: { message: `${order.name} added to cart` }
+        }))
     }
 
-    function handleDelete() {
-        if (userEmail === allowedEmail) {
-            if (window.confirm('Are you sure you want to delete this product?')) {
-                dispatch(deleteProduct(order.id))
-            }
-        } else {
-            alert('You are not authorized to delete this product')
+    const handleDelete = () => {
+        if (userEmail === allowedEmail && window.confirm('Delete this product?')) {
+            dispatch(deleteProduct(order.id))
         }
     }
 
-    function addItem() {
-        dispatch(addToCart(order))
-        // Subtle notification instead of alert
-        const event = new CustomEvent('showNotification', {
-            detail: { message: `${order.name} added to cart` }
-        })
-        window.dispatchEvent(event)
-    }
+    const images = [order.pic, order.backpic].filter(Boolean)
 
     return (
-        <Card className="luxury-product-card">
-            {/* Product Image Carousel */}
+        <Card className={`product-card ${className || ''}`}>
+            {/* Product Image */}
             <div className="product-image-container">
-                <Carousel
-                    activeIndex={index}
-                    onSelect={handleSelect}
-                    fade
-                    controls={false}
-                    indicators={false}
-                    className="product-carousel"
-                >
-                    <Carousel.Item>
-                        <Image
-                            src={order.pic}
-                            alt={order.name}
-                            className="product-image"
-                            loading="lazy"
-                        />
-                    </Carousel.Item>
-                    <Carousel.Item>
-                        <Image
-                            src={order.backpic}
-                            alt={order.name}
-                            className="product-image"
-                            loading="lazy"
-                        />
-                    </Carousel.Item>
-                </Carousel>
-                <div className="carousel-indicators">
-                    {[0, 1].map((i) => (
-                        <button
-                            key={i}
-                            className={`indicator ${index === i ? 'active' : ''}`}
-                            onClick={() => setIndex(i)}
-                            aria-label={`View image ${i + 1}`}
-                        />
-                    ))}
-                </div>
+                <Card.Img
+                    variant="top"
+                    src={images[currentImageIndex]}
+                    alt={order.name}
+                    className="product-image"
+                />
+
+                {images.length > 1 && (
+                    <div className="image-indicators">
+                        {images.map((_, index) => (
+                            <button
+                                key={index}
+                                className={`indicator ${currentImageIndex === index ? 'active' : ''}`}
+                                onClick={() => setCurrentImageIndex(index)}
+                            />
+                        ))}
+                    </div>
+                )}
             </div>
 
-            {/* Product Details */}
-            <Card.Body className="product-details">
-                <div className="product-header">
-                    <Card.Title className="product-name">{order.name}</Card.Title>
-                    <Card.Text className="product-price">₦{order.amount.toLocaleString()}</Card.Text>
-                </div>
-
-                <Card.Text className="product-description">
+            <Card.Body className="d-flex flex-column">
+                <Card.Title className="product-name">{order.name}</Card.Title>
+                <Card.Text className="product-price mb-2">
+                    ₦{order.amount.toLocaleString()}
+                </Card.Text>
+                <Card.Text className="product-description small text-muted mb-3">
                     {order.description}
                 </Card.Text>
 
-                <div className="product-actions">
+                <div className="mt-auto d-flex justify-content-between">
                     <Button
                         variant="outline-dark"
-                        className="add-to-cart-btn"
-                        onClick={addItem}
+                        size="sm"
+                        onClick={handleAddToCart}
                     >
-                        <i className="bi bi-bag-plus"></i> Add to Cart
+                        Add to Cart
                     </Button>
 
                     {userEmail === allowedEmail && (
-                        <div className="admin-actions">
+                        <div>
                             <Button
                                 variant="outline-danger"
-                                className="action-btn"
+                                size="sm"
+                                className="me-2"
                                 onClick={handleDelete}
                             >
-                                <i className="bi bi-trash"></i>
+                                Delete
                             </Button>
                             <Button
                                 variant="outline-secondary"
-                                className="action-btn"
-                                onClick={handleShow}
+                                size="sm"
+                                onClick={() => setShowUpdateModal(true)}
                             >
-                                <i className="bi bi-pencil"></i>
+                                Edit
                             </Button>
                         </div>
                     )}
                 </div>
             </Card.Body>
 
-            {/* Update Product Modal */}
             {userEmail === allowedEmail && (
-                <UpdateProduct product={order} show={show} handleClose={handleClose} />
+                <UpdateProduct
+                    product={order}
+                    show={showUpdateModal}
+                    handleClose={() => setShowUpdateModal(false)}
+                />
             )}
         </Card>
     )
