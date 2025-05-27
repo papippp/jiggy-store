@@ -10,11 +10,11 @@ export default function AddOrder({ order, className }) {
     const allowedEmail = 'lukzy@p.com'
     const [showUpdateModal, setShowUpdateModal] = useState(false)
     const [currentImageIndex, setCurrentImageIndex] = useState(0)
-
+    const [selectedSize, setSelectedSize] = useState('medium')
     const handleAddToCart = () => {
-        dispatch(addToCart(order))
+        dispatch(addToCart({ ...order, size: selectedSize }))
         window.dispatchEvent(new CustomEvent('showNotification', {
-            detail: { message: `${order.name} added to cart` }
+            detail: { message: `${order.name} (Size : ${selectedSize})added to cart` }
         }))
     }
 
@@ -58,6 +58,22 @@ export default function AddOrder({ order, className }) {
                 <Card.Text className="product-description small text-muted mb-3">
                     {order.description}
                 </Card.Text>
+
+                <div className='mb-3'>
+                    <label className='form-label'> size  </label>
+                    <div className='btn-group w-100' role='group'>
+                        {['small', 'medium', 'large'].map((size) => (
+                            <button
+                                key={size}
+                                type='button'
+                                className={`btn btn-outline-dark ${selectedSize === size ? 'active' : ''}`}
+                                onClick={() => setSelectedSize(size)}
+                            > {size}</button>
+                        ))}
+
+                    </div>
+                </div>
+
 
                 <div className="mt-auto d-flex justify-content-between">
                     <Button

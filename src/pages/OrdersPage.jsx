@@ -22,7 +22,7 @@ export default function OrdersPage({ onShow, onClose }) {
     // WhatsApp order sharing
     const generateWhatsAppMessage = () => {
         const message = orders.map(order =>
-            `• ${order.name} (${order.qty} × ₦${order.amount.toLocaleString()}) = ₦${(order.amount * order.qty).toLocaleString()}`
+            `• ${order.name} (Size : ${order.size}) (${order.qty} × ₦${order.amount.toLocaleString()}) = ₦${(order.amount * order.qty).toLocaleString()}`
         ).join('\n');
 
         const fullMessage = `🛍️ My Jiggy Wears Order:\n${message}\n\nSubtotal: ₦${subtotal.toLocaleString()}\nShipping: ₦${shippingFee.toLocaleString()}\nTotal: ₦${total.toLocaleString()}`;
@@ -80,6 +80,7 @@ export default function OrdersPage({ onShow, onClose }) {
                                         </Col>
                                         <Col xs={6}>
                                             <h6 className="mb-1">{order.name}</h6>
+                                            <p className="mb-1">{order.size.toLocaleString()}</p>
                                             <p className="mb-1">₦{order.amount.toLocaleString()}</p>
                                             <div className="d-flex align-items-center">
                                                 <Button

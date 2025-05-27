@@ -95,11 +95,11 @@ const orderSlice = createSlice({
         ,
 
         addToCart: (state, action) => {
-            const itemIndex = state.orders.findIndex((item) => item.id === action.payload.id)
+            const itemIndex = state.orders.findIndex((item) => item.id === action.payload.id && item.size === action.payload.size)
             if (itemIndex >= 0) {
                 state.orders[itemIndex].qty += 1
             } else {
-                const newProduct = { ...action.payload, qty: 1 }
+                const newProduct = { ...action.payload, qty: 1, size: action.payload.size || 'medium' }
                 console.log(newProduct)
                 state.orders.push(newProduct)
             }
