@@ -9,6 +9,7 @@ import { AuthProvider } from "./components/AuthProvider"
 import ValidateLogin from "./components/ValidateLogin"
 import Men from "./pages/Men"
 import Women from "./pages/Women"
+import CheckoutPage from "./pages/CheckoutPage"
 
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
             <Route path="/orders" element={<OrdersPage />} />
             <Route path="/men" element={<Men />} />
             <Route path="/women" element={<Women />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
           </Routes>
 
         </BrowserRouter>

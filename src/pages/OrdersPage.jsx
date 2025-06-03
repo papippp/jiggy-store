@@ -1,16 +1,25 @@
 import { Button, Col, Form, ListGroup, Offcanvas, Row } from "react-bootstrap";
-import { ChevronDown, ChevronUp, CreditCard, MessageSquare, ShoppingBag, X } from "react-feather";
+import { ChevronDown, ChevronUp, CreditCard, ShoppingBag, X } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { deleteItem, updateOrder } from "../features/orders/orderSlice";
 
 export default function OrdersPage({ onShow, onClose }) {
     const orders = useSelector((state) => state.orders.orders);
     const dispatch = useDispatch();
+    const navigate = useNavigate()
+
+    const proceedtoCheckout = () => {
+        onClose()
+        navigate('/checkout')
+    }
+
+
 
     // Calculate totals
     const subtotal = orders.reduce((sum, order) => sum + (parseInt(order.amount) * order.qty), 0);
-    const shippingFee = orders.length > 0 ? 1500 : 0; // Free shipping threshold could be added
-    const total = subtotal + shippingFee;
+
+    const total = subtotal
 
     // Quantity handlers
     const handleIncrease = (id) => dispatch(updateOrder({ id, qty: orders.find(order => order.id === id).qty + 1 }));
@@ -20,31 +29,7 @@ export default function OrdersPage({ onShow, onClose }) {
     };
 
     // WhatsApp order sharing
-    const generateWhatsAppMessage = () => {
-        const message = orders.map(order =>
-            `• ${order.name} (Size : ${order.size}) (${order.qty} × ₦${order.amount.toLocaleString()}) = ₦${(order.amount * order.qty).toLocaleString()}`
-        ).join('\n');
 
-        const fullMessage = `🛍️ My Jiggy Wears Order:\n${message}\n\nSubtotal: ₦${subtotal.toLocaleString()}\nShipping: ₦${shippingFee.toLocaleString()}\nTotal: ₦${total.toLocaleString()}`;
-        window.open(`https://wa.me/601126219810?text=${encodeURIComponent(fullMessage)}`, '_blank');
-    };
-
-    // Paystack payment
-    const handlePaystackPayment = () => {
-        const handler = window.PaystackPop.setup({
-            key: "pk_test_b54ce5e374814df3d936a647db3b50c115092da4",
-            email: "customer@example.com",
-            amount: total * 100,
-            currency: "NGN",
-            ref: `jiggy_order_${new Date().getTime()}`,
-            callback: (response) => {
-                alert(`Payment successful! Reference: ${response.reference}`);
-                onClose();
-            },
-            onClose: () => alert("Payment process was canceled")
-        });
-        handler.openIframe();
-    };
 
     return (
         <Offcanvas show={onShow} onHide={onClose} placement="end" className="luxury-side-cart">
@@ -130,7 +115,7 @@ export default function OrdersPage({ onShow, onClose }) {
                             </div>
                             <div className="d-flex justify-content-between mb-3">
                                 <span>Shipping</span>
-                                <span>₦{shippingFee.toLocaleString()}</span>
+
                             </div>
                             <div className="d-flex justify-content-between fw-bold mb-4">
                                 <span>Total</span>
@@ -140,8 +125,9 @@ export default function OrdersPage({ onShow, onClose }) {
                             <Button
                                 variant="dark"
                                 className="w-100 py-3 rounded-0 mb-3"
-                                onClick={handlePaystackPayment}
+                                onClick={proceedtoCheckout}
                             >
+
                                 <CreditCard size={18} className="me-2" />
                                 PROCEED TO CHECKOUT
                             </Button>
@@ -149,12 +135,14 @@ export default function OrdersPage({ onShow, onClose }) {
                             <Button
                                 variant="outline-dark"
                                 className="w-100 py-3 rounded-0"
-                                onClick={generateWhatsAppMessage}
+                                onClick={onClose}
+
                             >
-                                <MessageSquare size={18} className="me-2" />
-                                SHARE ORDER
+
+                                Continue shopping
                             </Button>
                         </div>
+
                     </>
                 ) : (
                     <div className="text-center my-auto py-5">
@@ -166,7 +154,9 @@ export default function OrdersPage({ onShow, onClose }) {
                         <Button variant="outline-dark" className="px-5" onClick={onClose}>
                             CONTINUE SHOPPING
                         </Button>
+
                     </div>
+
                 )}
             </Offcanvas.Body>
         </Offcanvas>
