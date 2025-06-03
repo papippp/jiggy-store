@@ -43,11 +43,7 @@ export default function HomePage() {
                                         alt="About Jiggy Wears"
                                     />
                                 </div>
-                                <Carousel.Caption className="carousel-caption">
-                                    <h3>Premium Fashion Experience</h3>
-                                    <p>Discover our story and what makes Jiggy Wears unique</p>
-                                    <button className="btn btn-light mt-2">Learn More</button>
-                                </Carousel.Caption>
+
                             </Carousel.Item>
 
                             {/* Slide 2: Top Seller */}
@@ -59,11 +55,7 @@ export default function HomePage() {
                                         alt="Top Seller Products"
                                     />
                                 </div>
-                                <Carousel.Caption className="carousel-caption">
-                                    <h3>Customer Favorites</h3>
-                                    <p>Shop our best-selling items loved by thousands</p>
 
-                                </Carousel.Caption>
                             </Carousel.Item>
 
                             {/* Slide 3: New Product */}
@@ -78,11 +70,7 @@ export default function HomePage() {
                                         alt="Model Showcase"
                                     />
                                 </div>
-                                <Carousel.Caption className="carousel-caption">
-                                    <h3>Style Inspiration</h3>
-                                    <p>See our outfits in action with professional styling</p>
 
-                                </Carousel.Caption>
                             </Carousel.Item>
                         </Carousel>
                     </div>

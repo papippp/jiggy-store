@@ -41,12 +41,12 @@ export default function NavBar({ handleShow }) {
                         <span className="luxury-font">JIGGY</span> <span className="thin-font">WEARS</span>
                     </Navbar.Brand>
 
-                    <Navbar.Toggle aria-controls="main-nav" />
-                    <Navbar.Collapse id='main-nav'>
+                    <Navbar.Toggle />
+                    <Navbar.Collapse >
                         <Nav className='mx-auto'>
-                            <Nav.Link as={Link} to={'/home'} className="nav-link">Home</Nav.Link>
-                            <Nav.Link as={Link} to={'/men'} className="nav-link">Men</Nav.Link>
-                            <Nav.Link as={Link} to={'/women'} className="nav-link">Women</Nav.Link>
+                            <Nav.Link as={Link} to={'/home'} style={{ color: '#FFFFFF' }} >Home</Nav.Link>
+                            <Nav.Link as={Link} to={'/men'} style={{ color: '#FFFFFF' }}>Men</Nav.Link>
+                            <Nav.Link as={Link} to={'/women'} style={{ color: '#FFFFFF' }} >Women</Nav.Link>
 
                         </Nav>
                         <Nav className='ms-auto'>

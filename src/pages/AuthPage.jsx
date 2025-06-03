@@ -22,28 +22,52 @@ export default function AuthPage() {
     const [products] = useState([
         {
             id: 1,
-            name: "Premium Denim Jacket",
-            price: 89.99,
-            image: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea",
-            description: "Classic denim jacket with modern fit"
+            name: "Premium shorts ",
+            price: 100000,
+            image: "https://res.cloudinary.com/dqcztgs4v/image/upload/v1732944219/WhatsApp_Image_2024-11-30_at_1.20.37_AM_qntyrh.jpg",
+            description: "Classic and modern fit"
+        },
+        {
+            id: 2,
+            name: "Luxury beach wear",
+            price: 128000,
+            image: "https://res.cloudinary.com/dqcztgs4v/image/upload/v1732531907/WhatsApp_Image_2024-11-25_at_5.44.07_PM_hdv0pk.jpg",
+            description: "Ultra-soft beach wear for ultimate comfort"
+        },
+        {
+            id: 3,
+            name: "Signature Leather Pants",
+            price: 159000,
+            image: "https://res.cloudinary.com/dqcztgs4v/image/upload/v1732539568/WhatsApp_Image_2024-11-25_at_5.44.06_PM_vo9k4e.jpg",
+            description: "High-quality leather with perfect fit"
+        }
+    ])
+
+    const [producs] = useState([
+        {
+            id: 1,
+            name: "Premium shorts ",
+            price: 100000,
+            image: "https://res.cloudinary.com/dqcztgs4v/image/upload/v1748829185/photo_6188138139789411362_y_vvoesc.jpg",
+            description: "Classic and modern fit"
         },
         {
             id: 2,
             name: "Luxury Cashmere Sweater",
-            price: 129.99,
-            image: "https://images.unsplash.com/photo-1520367445093-50dc08a59d9d",
+            price: 128000,
+            image: "https://res.cloudinary.com/dqcztgs4v/image/upload/v1748829184/photo_6188138139789411360_y_d1d7di.jpg",
             description: "Ultra-soft cashmere for ultimate comfort"
         },
         {
             id: 3,
             name: "Signature Leather Pants",
-            price: 159.99,
-            image: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea",
+            price: 159000,
+            image: "https://res.cloudinary.com/dqcztgs4v/image/upload/v1748829184/photo_6188138139789411359_y_r7eaop.jpg",
             description: "High-quality leather with perfect fit"
         }
     ])
 
-    const loginImage = 'https://res.cloudinary.com/duocpeihb/image/upload/v1730853747/WhatsApp_Image_2024-11-06_at_7.41.51_AM_zkmeqp.jpg'
+
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const auth = getAuth()
@@ -107,29 +131,6 @@ export default function AuthPage() {
                         <span className="navbar-toggler-icon"></span>
                     </Navbar.Toggle>
 
-                    <Navbar.Collapse id='main-nav'>
-                        <Nav className='mx-auto'>
-                            <Nav.Link as={Link} to={'/home'} className="nav-link px-3">Home</Nav.Link>
-                            <Nav.Link as={Link} to={'/men'} className="nav-link px-3">Men</Nav.Link>
-                            <Nav.Link as={Link} to={'/women'} className="nav-link px-3">Women</Nav.Link>
-                            <Nav.Link as={Link} to={'/accessories'} className="nav-link px-3">Accessories</Nav.Link>
-                        </Nav>
-
-                        <Nav className='ms-auto align-items-center'>
-                            <Button variant="link" className="nav-icon">
-                                <i className="bi bi-bag"></i>
-                            </Button>
-                            {!currentUser && (
-                                <Button
-                                    variant="outline-dark"
-                                    className="ms-3 login-btn"
-                                    onClick={handleShowLogin}
-                                >
-                                    Login
-                                </Button>
-                            )}
-                        </Nav>
-                    </Navbar.Collapse>
                 </Container>
             </Navbar>
 
@@ -141,7 +142,7 @@ export default function AuthPage() {
                         <Col lg={6} className="auth-content-col">
                             <div className="auth-content-wrapper">
                                 <h1 className="display-4 fw-bold mb-4">Elevate Your Style</h1>
-                                <p className="lead mb-5">Discover premium fashion curated for the modern individual</p>
+                                <p className="lead mb-5">Style is your signature, fashion is the canvas we paint at Jiggy Store.</p>
 
                                 <div className="auth-cta">
                                     <Button
@@ -163,7 +164,7 @@ export default function AuthPage() {
                                 </div>
 
                                 <div className="trust-badges mt-5">
-                                    <p className="text-muted mb-2">TRUSTED BY FASHION ENTHUSIASTS WORLDWIDE</p>
+
                                     <div className="d-flex">
                                         <span className="badge me-2">Premium Quality</span>
                                         <span className="badge me-2">Ethically Sourced</span>
@@ -183,7 +184,7 @@ export default function AuthPage() {
                                 indicators={false}
                                 interval={5000}
                             >
-                                {products.map((product, index) => (
+                                {producs.map((product, index) => (
                                     <Carousel.Item key={product.id} className="h-100">
                                         <div className="product-slide h-100 position-relative">
                                             <Image
@@ -193,27 +194,10 @@ export default function AuthPage() {
                                                 className="h-100 w-100 object-fit-cover"
                                             />
                                             <div className={`product-info ${index === activeIndex ? 'active' : ''}`}>
-                                                <h3>{product.name}</h3>
-                                                <p className="price">${product.price}</p>
-                                                <Button
-                                                    variant="outline-light"
-                                                    className="mt-3 explore-btn"
-                                                    onClick={() => navigate('/shop')}
-                                                >
-                                                    Explore Collection <i className="bi bi-balloon-heart-fill"></i>
-                                                </Button>
+
+
                                             </div>
-                                            <Button
-                                                variant="link"
-                                                className={`wishlist-btn ${wishlist.includes(product.id) ? 'active' : ''}`}
-                                                onClick={() => toggleWishlist(product.id)}
-                                            >
-                                                {wishlist.includes(product.id) ? (
-                                                    <i className="bi bi-balloon-heart-fill"></i>
-                                                ) : (
-                                                    <i className="bi bi-heart"></i>
-                                                )}
-                                            </Button>
+
                                         </div>
                                     </Carousel.Item>
                                 ))}
@@ -248,7 +232,7 @@ export default function AuthPage() {
                                     <Card.Body className="text-center">
                                         <Card.Title>{product.name}</Card.Title>
                                         <Card.Text className="text-muted">
-                                            ${product.price}
+                                            #{product.price}
                                         </Card.Text>
                                     </Card.Body>
                                 </Card>

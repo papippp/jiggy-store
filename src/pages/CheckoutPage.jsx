@@ -226,7 +226,6 @@ export default function CheckoutPage({ onClose }) {
                                                                 <p className="mb-1 small text-muted">Size: {order.size}</p>
                                                                 <div className="d-flex align-items-center">
 
-
                                                                     <span className="mx-2">{order.qty}</span>
 
                                                                 </div>
