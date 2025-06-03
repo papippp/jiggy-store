@@ -47,7 +47,6 @@ export default function NavBar({ handleShow }) {
                             <Nav.Link as={Link} to={'/home'} className="nav-link">Home</Nav.Link>
                             <Nav.Link as={Link} to={'/men'} className="nav-link">Men</Nav.Link>
                             <Nav.Link as={Link} to={'/women'} className="nav-link">Women</Nav.Link>
-                            <Nav.Link as={Link} to={'/client-services'} className="nav-link">Accessories </Nav.Link>
 
                         </Nav>
                         <Nav className='ms-auto'>
