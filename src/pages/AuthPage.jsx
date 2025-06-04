@@ -121,9 +121,7 @@ export default function AuthPage() {
                         <span className="luxury-font">JIGGY</span> <span className="thin-font">WEARS</span>
                     </Navbar.Brand>
 
-                    <Navbar.Toggle aria-controls="main-nav" className="border-0">
-                        <span className="navbar-toggler-icon"></span>
-                    </Navbar.Toggle>
+
 
                 </Container>
             </Navbar>
