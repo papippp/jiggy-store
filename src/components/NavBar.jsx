@@ -1,19 +1,17 @@
 import { getAuth } from "firebase/auth";
 import { useContext, useEffect, useState } from "react";
-import { Badge, Button, Container, Nav, Navbar } from "react-bootstrap";
+import { Button, Container, Nav, Navbar } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../features/orders/orderSlice";
 import OrdersPage from "../pages/OrdersPage";
+import FloatingCart from "./FloatingCart";
 
 
 export default function NavBar({ handleShow }) {
     const userEmail = useSelector((state) => state.orders.userEmail)
     const allowedEmail = 'lukzy@p.com'
-    const orders = useSelector((state) => state.orders.orders)
-    const ordersCount = orders.reduce((accumulator, item) => {
-        return accumulator + item.qty
-    }, 0)
+
 
     const auth = getAuth()
     const navigate = useNavigate()
@@ -42,7 +40,7 @@ export default function NavBar({ handleShow }) {
                     </Navbar.Brand>
 
                     <Navbar.Toggle aria-controls="navbar-collapse" className="navbar-dark">
-                        <span className="navbar-toggler-icon-white"></span>
+                        <i className="bi bi-x-square text-white"></i>
                     </Navbar.Toggle>
 
                     <Navbar.Collapse id="navbar-collapse" className="navbar-collapse-custom" >
@@ -59,17 +57,8 @@ export default function NavBar({ handleShow }) {
 
                                 </Button>
                             )}
-                            <Button onClick={handleShowOrder}>
 
 
-                                <i className='bi bi-bag fs-5'></i>
-                                {ordersCount > 0 && (
-                                    <Badge pill bg='light' text='dark' className='ms-2 cart-badge' >
-                                        {ordersCount}
-                                    </Badge>
-                                )}
-
-                            </Button>
 
                             <Button
                                 variant="link"
@@ -85,6 +74,7 @@ export default function NavBar({ handleShow }) {
                 </Container>
 
             </Navbar>
+            <FloatingCart onClick={handleShowOrder} />
             <OrdersPage onShow={showOrder} onClose={handleCloseOrder} />
 
         </div>

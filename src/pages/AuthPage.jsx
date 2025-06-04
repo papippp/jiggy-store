@@ -1,9 +1,9 @@
 import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from "firebase/auth"
 import { useContext, useEffect, useState } from "react"
-import { Button, Carousel, Col, Container, Form, Image, Modal, Nav, Navbar, Row, Card } from "react-bootstrap"
-import { Link, useNavigate } from "react-router-dom"
-import { AuthContext, setUserEmail } from "../features/orders/orderSlice"
+import { Button, Card, Carousel, Col, Container, Form, Image, Modal, Navbar, Row } from "react-bootstrap"
 import { useDispatch } from "react-redux"
+import { useNavigate } from "react-router-dom"
+import { AuthContext, setUserEmail } from "../features/orders/orderSlice"
 
 
 export default function AuthPage() {
@@ -15,7 +15,7 @@ export default function AuthPage() {
     const [authError, setAuthError] = useState('')
 
     // Shopping state
-    const [wishlist, setWishlist] = useState([])
+
     const [activeIndex, setActiveIndex] = useState(0)
 
     // Sample products data

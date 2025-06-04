@@ -514,3 +514,19 @@
         color: #000 !important;
     }
 }
+
+.floating-cart-btn {
+    transition: all 0.3s ease;
+}
+
+.floating-cart-btn:hover {
+    transform: scale(1.1);
+}
+
+/* Ensure the cart button doesn't overlap with other important elements */
+@media (max-width: 768px) {
+    .floating-cart-btn {
+        bottom: 70px !important;
+        right: 15px !important;
+    }
+}
