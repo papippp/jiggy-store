@@ -106,13 +106,7 @@ export default function AuthPage() {
     const handleCloseSignup = () => setShowSignupModal(false)
     const handleShowSignup = () => setShowSignupModal(true)
 
-    const toggleWishlist = (productId) => {
-        if (wishlist.includes(productId)) {
-            setWishlist(wishlist.filter(id => id !== productId))
-        } else {
-            setWishlist([...wishlist, productId])
-        }
-    }
+
 
     const handleSelect = (selectedIndex) => {
         setActiveIndex(selectedIndex)
@@ -366,11 +360,13 @@ export default function AuthPage() {
             <footer className="footer bg-dark text-white py-5">
                 <Container>
                     <Row>
-                        <Col lg={4} className="mb-4 mb-lg-0">
-                            <h5 className="footer-heading">JIGGY WEARS</h5>
-                            <p className="footer-text mt-3">
-                                Crafting exceptional luxury apparel with meticulous attention to detail and timeless elegance.
-                            </p>
+                        <Col lg={4} className="mb-4 mb-lg-0 order-lg-2">
+                            <h5 className="footer-heading">Contact</h5>
+                            <address className="footer-contact mt-3">
+                                <p><i className="bi bi-geo-alt me-2"></i> 11 Yaba Road, Lagos</p>
+                                <p><i className="bi bi-telephone me-2"></i> +234 (916) 281-7078</p>
+                                <p><i className="bi bi-envelope me-2"></i> jiggywears@ppp.com</p>
+                            </address>
                             <div className="social-links mt-4">
                                 <Button variant="outline-light" size="sm" className="me-2 rounded-circle">
                                     <i className="bi bi-facebook"></i>
@@ -382,32 +378,16 @@ export default function AuthPage() {
                                     <i className="bi bi-twitter"></i>
                                 </Button>
                             </div>
+
                         </Col>
-                        <Col lg={2} md={4} className="mb-4 mb-md-0">
-                            <h5 className="footer-heading">Shop</h5>
-                            <Nav className="flex-column mt-3">
-                                <Nav.Link as={Link} to={'/men'} className="footer-link px-0">Men</Nav.Link>
-                                <Nav.Link as={Link} to={'/women'} className="footer-link px-0">Women</Nav.Link>
-                                <Nav.Link as={Link} to={'/accessories'} className="footer-link px-0">Accessories</Nav.Link>
-                                <Nav.Link as={Link} to={'/new-arrivals'} className="footer-link px-0">New Arrivals</Nav.Link>
-                            </Nav>
-                        </Col>
-                        <Col lg={2} md={4} className="mb-4 mb-md-0">
-                            <h5 className="footer-heading">Help</h5>
-                            <Nav className="flex-column mt-3">
-                                <Nav.Link as={Link} to={'/contact'} className="footer-link px-0">Contact Us</Nav.Link>
-                                <Nav.Link as={Link} to={'/faq'} className="footer-link px-0">FAQs</Nav.Link>
-                                <Nav.Link as={Link} to={'/shipping'} className="footer-link px-0">Shipping</Nav.Link>
-                                <Nav.Link as={Link} to={'/returns'} className="footer-link px-0">Returns</Nav.Link>
-                            </Nav>
-                        </Col>
-                        <Col lg={4} md={4}>
-                            <h5 className="footer-heading">Contact</h5>
-                            <address className="footer-contact mt-3">
-                                <p><i className="bi bi-geo-alt me-2"></i> 11 Yaba Road, Lagos</p>
-                                <p><i className="bi bi-telephone me-2"></i> +234 (916) 281-7078</p>
-                                <p><i className="bi bi-envelope me-2"></i> jiggywears@ppp.com</p>
-                            </address>
+
+
+                        <Col lg={4} className="mb-4 mb-lg-0 order-lg-1 offset-lg-4">
+                            <h5 className="footer-heading">ABOUT US</h5>
+                            <p className="footer-text mt-3">
+                                Crafting exceptional luxury apparel with meticulous attention to detail and timeless elegance.
+                            </p>
+
                         </Col>
                     </Row>
                     <hr className="mt-5 mb-4" />
@@ -416,7 +396,7 @@ export default function AuthPage() {
                             <p className="mb-0">&copy; {new Date().getFullYear()} JIGGY WEARS. All rights reserved.</p>
                         </Col>
                         <Col md={6} className="text-md-end">
-                            <p className="mb-0">Built by: <a href="#" className="text-white">$PPP</a></p>
+                            <p className="mb-0">Built by: <a href="https://portfolio-papippps-projects.vercel.app/" className="text-white">$PPP</a></p>
                         </Col>
                     </Row>
                 </Container>

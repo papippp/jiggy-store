@@ -479,3 +479,38 @@
         width: 100%;
     }
 }
+
+/* Custom white navbar toggle button */
+.navbar-dark .navbar-toggler-icon-white {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Custom collapse menu for mobile */
+@media (max-width: 992px) {
+    .navbar-collapse-custom {
+        background-color: white;
+        padding: 20px;
+        margin-top: 10px;
+        border-radius: 4px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar-collapse-custom .nav-link {
+        color: #000 !important;
+        padding: 10px 0 !important;
+        border-bottom: 1px solid #eee;
+    }
+
+    .navbar-collapse-custom .nav-link:after {
+        background-color: #000 !important;
+    }
+
+    .navbar-collapse-custom .btn {
+        margin-top: 10px;
+        width: 100%;
+    }
+
+    .navbar-collapse-custom .logout-btn {
+        color: #000 !important;
+    }
+}
