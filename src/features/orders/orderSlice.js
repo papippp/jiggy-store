@@ -3,7 +3,7 @@ import axios from "axios";
 import { createContext } from "react";
 
 //'https://3633cdd5-042a-46a7-b863-99b64ead49e0-00-2pnrudecgoroo.pike.replit.dev'
-const BASE_URL = 'https://jiggy-store.replit.app'
+const BASE_URL = 'https://jiggy-wears-api.onrender.com'
 
 
 export const fetchProduct = createAsyncThunk(

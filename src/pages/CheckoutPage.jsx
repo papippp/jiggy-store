@@ -103,11 +103,23 @@ export default function CheckoutPage({ onClose }) {
                                         <h4 className="mb-4">Contact Information</h4>
                                         <Form onSubmit={handleSubmitOrder}>
                                             <Form.Group className="mb-3">
-                                                <Form.Label>Email address or phone number</Form.Label>
+                                                <Form.Label>Email address (for payment receipt)</Form.Label>
+                                                <Form.Control
+                                                    type="email"
+                                                    name="email"
+                                                    placeholder="your@email.com"
+                                                    value={customerInfo.email}
+                                                    onChange={handleInputChange}
+                                                    required
+                                                />
+                                            </Form.Group>
+                                             <Form.Group className="mb-3">
+                                                <Form.Label>Phone number </Form.Label>
                                                 <Form.Control
                                                     type="text"
-                                                    name="email"
-                                                    value={customerInfo.email}
+                                                    name="phone"
+                                                    placeholder="07076347635"
+                                                    value={customerInfo.phone}
                                                     onChange={handleInputChange}
                                                     required
                                                 />
@@ -216,7 +228,7 @@ export default function CheckoutPage({ onClose }) {
                                                                 style={{
                                                                     width: '60px',
                                                                     height: '60px',
-                                                                    backgroundImage: `url(${order.image || 'https://via.placeholder.com/150'})`,
+                                                                    backgroundImage: `url(${ order.pic ||order.image || 'https://placehold.co/150x150'})`,
                                                                     backgroundSize: 'cover',
                                                                     backgroundPosition: 'center'
                                                                 }}
