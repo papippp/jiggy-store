@@ -57,7 +57,7 @@ export default function OrdersPage({ onShow, onClose }) {
                                                 className="bg-light"
                                                 style={{
                                                     height: '80px',
-                                                    backgroundImage: `url(${order.image || 'https://via.placeholder.com/150'})`,
+                                                    backgroundImage: `url(${order.pic || 'https://via.placeholder.com/150'})`,
                                                     backgroundSize: 'cover',
                                                     backgroundPosition: 'center'
                                                 }}

@@ -1,10 +1,46 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { createContext } from "react";
 
 //'https://3633cdd5-042a-46a7-b863-99b64ead49e0-00-2pnrudecgoroo.pike.replit.dev'
 const BASE_URL = 'https://jiggy-wears-api.onrender.com'
 
+function getInitialAuthState() {
+    try {
+        const token = localStorage.getItem('jiggy_token')
+        const username = localStorage.getItem('jiggy_username')
+        if (!token || !username) return {token : null, isAdmin : false, userEmail : null}
+        return {
+            token,
+            userEmail : username,
+            isAdmin : username === 'lukzy'
+        }
+        
+    }
+    catch {
+            return { token : null, isAdmin : false, username : null}
+        }
+}
+
+const authState = getInitialAuthState()
+
+function saveCart (orders) {
+    try {
+        localStorage.setItem('jiggy_cart', JSON.stringify(orders))
+    }
+    catch {
+        //localStorage full or unavailable - fall silently
+    }
+}
+
+function loadCart () {
+    try {
+        const saved = localStorage.getItem('jiggy_cart')
+        return saved ? JSON.parse(saved) : []
+    }
+    catch {
+        return []
+    }
+}
 
 export const fetchProduct = createAsyncThunk(
     'product/fetch',
@@ -24,14 +60,16 @@ export const fetchProduct = createAsyncThunk(
 
 export const createProduct = createAsyncThunk(
     'product/create',
-    async ({ name, description, amount, pic, backpic, gender }) => {
+    async ({ name, description, amount, pic, backpic, gender,category,stock }) => {
         const data = {
-            name: name,
-            description: description,
-            amount: amount,
-            pic: pic,
-            backpic: backpic,
-            gender: gender
+             name,
+            description,
+             amount,
+             pic,
+             backpic,
+             gender,
+             category,
+             stock
         }
 
         const response = await axios.post(`${BASE_URL}/product`, data)
@@ -43,13 +81,16 @@ export const createProduct = createAsyncThunk(
 
 export const updateProduct = createAsyncThunk(
     'product/update',
-    async ({ id, name, description, amount, pic, backpic }) => {
+    async ({ id, name, description, amount, pic, backpic,gender,category,stock }) => {
         const data = {
-            name: name,
-            description: description,
-            amount: amount,
-            pic: pic,
-            backpic: backpic
+             name,
+             description,
+             amount,
+             pic,
+             backpic,
+             gender,
+             category,
+             stock
         }
         const response = await axios.put(`${BASE_URL}/product/${id}`, data)
         return response.data
@@ -77,15 +118,36 @@ export const deleteProduct = createAsyncThunk(
 const orderSlice = createSlice({
     name: 'orders',
     initialState: {
-        orders: [], products: [], filteredProducts: [], userEmail: null, loading: true
+        orders:loadCart(), 
+        products: [], 
+        filteredProducts: [], 
+        searchQuery : '',
+        userEmail: authState.userEmail,
+        error : null, 
+        token : authState.token,
+        isAdmin : authState.isAdmin,
+        loading : false
     },
     reducers: {
-        setUserEmail: (state, action) => {
-            state.userEmail = action.payload
-
+        setToken : (state, action) => {
+            state.token = action.payload.token
+            state.userEmail = action.payload.userEmail
+            state.isAdmin = action.payload.username === 'lukzy'
+            localStorage.setItem('jiggy_token', action.payload.token)
+            localStorage.setItem('jiggy_username', action.payload.username)
         }
-
         ,
+        logout : (state) => {
+            state.token = null
+            state.userEmail = null
+            state.isAdmin = false
+            localStorage.removeItem('jiggy_token')
+            localStorage.removeItem('jiggy_username')
+        },
+        setSearchQuery : (state,action) => {
+            state.searchQuery = action.payload
+        },
+
         filteredProductsByGender: (state, action) => {
             const gender = action.payload
             state.filteredProducts = state.products.filter(product =>
@@ -95,7 +157,8 @@ const orderSlice = createSlice({
         ,
 
         addToCart: (state, action) => {
-            const itemIndex = state.orders.findIndex((item) => item.id === action.payload.id && item.size === action.payload.size)
+            const itemIndex = state.orders.findIndex(
+                (item) => item.id === action.payload.id && item.size === action.payload.size)
             if (itemIndex >= 0) {
                 state.orders[itemIndex].qty += 1
             } else {
@@ -103,10 +166,13 @@ const orderSlice = createSlice({
                 console.log(newProduct)
                 state.orders.push(newProduct)
             }
+            saveCart(state.orders)
         },
+
         updateOrder: (state, action) => {
             const { id, qty } = action.payload
-            const itemIndex = state.orders.findIndex((item) => item.id === id)
+            const itemIndex = state.orders.findIndex(
+                (item) => item.id === id)
             if (itemIndex >= 0) {
                 if (qty <= 0) {
                     state.orders.splice(itemIndex, 1)
@@ -114,17 +180,22 @@ const orderSlice = createSlice({
                     state.orders[itemIndex].qty = qty
                 }
             }
+            saveCart(state.orders)
         }
 
 
         , deleteItem: (state, action) => {
             const itemIndex = state.orders.findIndex((item) => item.id === action.payload.id)
             if (itemIndex >= 0) {
-
                 state.orders.splice(itemIndex, 1)
-
             }
+            saveCart(state.orders)
+        },
+        clearCart : (state) => {
+            state.orders  = []
+            saveCart([])
         }
+    
     },
     extraReducers: (builder) => {
         builder
@@ -154,6 +225,6 @@ const orderSlice = createSlice({
 
 })
 
-export const { addToCart, deleteItem, updateOrder, setUserEmail, filteredProductsByGender } = orderSlice.actions
+export const { addToCart, deleteItem, updateOrder, setToken,setSearchQuery,logout, filteredProductsByGender, clearCart } = orderSlice.actions
 export default orderSlice.reducer
-export const AuthContext = createContext()
+

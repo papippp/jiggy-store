@@ -22,6 +22,7 @@ export default function Footer() {
 
                                 <Nav.Link as={Link} to={'/Men'} className="footer-link">Men</Nav.Link>
                                 <Nav.Link as={Link} to={'/Women'} className="footer-link">Women</Nav.Link>
+                                <Nav.Link as={Link} to={'/track'} className="footer-link">Track Order</Nav.Link>
                             </Nav>
                         </Col>
                         <Col lg={4} className='footer-col'>
@@ -29,18 +30,25 @@ export default function Footer() {
                             <address className='footer-contact'>
                                 <p><i className="bi bi-geo-alt"></i> 11 Yaba road,Lagos</p>
                                 <p><i className="bi bi-telephone"></i> +234 (916) 281-7078</p>
-                                <p><i className="bi bi-envelope"></i> jiggywears@ppp.com</p>
+                                <p><i className="bi bi-envelope"></i> riddick803@gmail.com</p>
 
                             </address>
                             <div className="social-links mt-4">
-                                <Button variant="outline-light" size="sm" className="me-2 rounded-circle">
-                                    <i className="bi bi-facebook"></i>
-                                </Button>
-                                <Button variant="outline-light" size="sm" className="me-2 rounded-circle">
+                                <Button variant="outline-light"
+                                 size="sm"
+                                  className="me-2 rounded-circle"
+                                  as={Link}
+                                  to='https://www.instagram.com/jiggyofficial_ng?igsh=YXRrcGticXNrYm5w'
+                                  >
                                     <i className="bi bi-instagram"></i>
                                 </Button>
-                                <Button variant="outline-light" size="sm" className="me-2 rounded-circle">
-                                    <i className="bi bi-twitter"></i>
+                                <Button variant="outline-light" 
+                                size="sm"
+                                 className="me-2 rounded-circle"
+                                 as={Link}
+                                 to='https://www.tiktok.com/@jiggyofficial._ng?_r=1&_t=ZS-97uPoYmnhHF'
+                                 >
+                                    <i className="bi bi-tiktok"></i>
                                 </Button>
                             </div>
                         </Col>

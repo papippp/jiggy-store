@@ -4,18 +4,13 @@ import CreateOrderModal from '../components/CreateOrderModal'
 import Footer from '../components/Footer'
 import NavBar from '../components/NavBar'
 import ProfileMianBody from '../components/ProfileMianBody'
+import { useSelector } from 'react-redux'
 
 export default function HomePage() {
     const [show, setShow] = useState(false)
     const handleShow = () => setShow(true)
     const handleClose = () => setShow(false)
-
-
-
-
-
-
-
+    const userEmail = useSelector((state) => state.orders.userEmail)
 
 
     return (
@@ -26,14 +21,36 @@ export default function HomePage() {
                 <NavBar handleShow={handleShow} />
                 <Container fluid className='main-content'>
                     <Row className='welcome-section'>
-                        <Col>
-                            <h1 className="welcome-heading">Welcome to Jiggy Wears</h1>
+                        <Col>{
+                            userEmail ? (
+                                <>
+                                <p
+                                 style={{
+                    fontSize: '0.7rem',
+                    letterSpacing: '3px',
+                    textTransform: 'uppercase',
+                    color: 'rgba(255,255,255,0.6)',
+                    marginBottom: '8px',
+                    fontFamily: 'Jost, sans-serif'
+                }}
+                                >
+                                    Welcome Back
+                                </p>
+                                <h1 className='welcome-heading'>{userEmail}</h1>
+                                </>
+                            ) : (
+                                <>
+                                <h1 className="welcome-heading">Welcome to Jiggy Wears</h1>
                             <p className="welcome-subheading">Curated Luxury Apparel</p>
+                                </>
+                            )
+                        }
+                            
                         </Col>
 
                     </Row>
-                    <div className="mb-5">
-                        <Carousel fade interval={5000} pause='hover' className="custom-carousel">
+                    <div style={{ marginBottom: '2rem' }}>
+                        <Carousel fade interval={5000} pause='hover'  controls={true} indicators={true}>
                             {/* Slide 1: Information */}
                             <Carousel.Item>
                                 <div className="carousel-image-container">

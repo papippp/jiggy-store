@@ -1,18 +1,13 @@
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from "firebase/auth"
-import { useContext, useEffect, useState } from "react"
-import { Button, Card, Carousel, Col, Container, Form, Image, Modal, Navbar, Row } from "react-bootstrap"
-import { useDispatch } from "react-redux"
+import { useEffect, useState } from "react"
+import { Button, Card, Carousel, Col, Container, Image, Row } from "react-bootstrap"
+import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
-import { AuthContext, setUserEmail } from "../features/orders/orderSlice"
+import NavBar from "../components/NavBar"
 
 
 export default function AuthPage() {
     // Authentication state
-    const [showLoginModal, setShowLoginModal] = useState(false)
-    const [showSignupModal, setShowSignupModal] = useState(false)
-    const [username, setUsername] = useState('')
-    const [password, setPassword] = useState('')
-    const [authError, setAuthError] = useState('')
+   
 
     // Shopping state
 
@@ -66,65 +61,27 @@ export default function AuthPage() {
             description: "High-quality leather with perfect fit"
         }
     ])
-
-
-    const dispatch = useDispatch()
+   
     const navigate = useNavigate()
-    const auth = getAuth()
-    const { currentUser } = useContext(AuthContext)
+    
+    const token = useSelector((state) => state.orders.token)
 
     useEffect(() => {
-        if (currentUser) navigate('/home')
-    }, [currentUser, navigate])
+        if (token) navigate('/home')
+    }, [token, navigate])
 
-    const handleSignup = async (e) => {
-        e.preventDefault()
-        setAuthError('')
-        try {
-            const res = await createUserWithEmailAndPassword(auth, username, password)
-            console.log(res.user)
-            handleCloseSignup()
-        } catch (error) {
-            setAuthError(error.message)
-        }
-    }
-
-    const handleLogin = async (e) => {
-        e.preventDefault()
-        setAuthError('')
-        try {
-            await signInWithEmailAndPassword(auth, username, password)
-            dispatch(setUserEmail(auth.currentUser.email))
-            handleCloseLogin()
-        } catch (error) {
-            setAuthError("Invalid email or password")
-        }
-    }
-
-    const handleCloseLogin = () => setShowLoginModal(false)
-    const handleShowLogin = () => setShowLoginModal(true)
-    const handleCloseSignup = () => setShowSignupModal(false)
-    const handleShowSignup = () => setShowSignupModal(true)
-
-
-
+    
     const handleSelect = (selectedIndex) => {
         setActiveIndex(selectedIndex)
     }
 
     return (
+        <>
+        <NavBar/>
+       
         <div className="auth-page">
             {/* Premium Navigation Bar */}
-            <Navbar expand='lg' className='main-navbar fixed-top'>
-                <Container>
-                    <Navbar.Brand className="brand-logo">
-                        <span className="luxury-font">JIGGY</span> <span className="thin-font">WEARS</span>
-                    </Navbar.Brand>
-
-
-
-                </Container>
-            </Navbar>
+            
 
             {/* Hero Section with Split Layout */}
             <section className="hero-section">
@@ -141,7 +98,7 @@ export default function AuthPage() {
                                         variant="dark"
                                         size="lg"
                                         className="rounded-pill px-4 me-3"
-                                        onClick={handleShowLogin}
+                                        
                                     >
                                         Sign In
                                     </Button>
@@ -149,7 +106,7 @@ export default function AuthPage() {
                                         variant="outline-dark"
                                         size="lg"
                                         className="rounded-pill px-4"
-                                        onClick={handleShowSignup}
+                                       
                                     >
                                         Create Account
                                     </Button>
@@ -216,7 +173,7 @@ export default function AuthPage() {
                                         <Button
                                             variant="light"
                                             className="quick-shop-btn"
-                                            onClick={handleShowLogin}
+                                        
                                         >
                                             Quick Shop
                                         </Button>
@@ -235,125 +192,9 @@ export default function AuthPage() {
             </section>
 
             {/* Login Modal */}
-            <Modal show={showLoginModal} onHide={handleCloseLogin} centered>
-                <Modal.Header closeButton className="border-0 pb-0">
-                    <Modal.Title className="w-100 text-center">
-                        <h3 className="mb-0">Welcome Back</h3>
-                        <p className="text-muted mt-2">Sign in to your account</p>
-                    </Modal.Title>
-                </Modal.Header>
-                <Modal.Body className="pt-0">
-                    <Form onSubmit={handleLogin}>
-                        {authError && <div className="alert alert-danger">{authError}</div>}
-                        <Form.Group className="mb-3">
-                            <Form.Label>Email Address</Form.Label>
-                            <Form.Control
-                                type="email"
-                                placeholder="Enter your email"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                                required
-                                className="py-2"
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Password</Form.Label>
-                            <Form.Control
-                                type="password"
-                                placeholder="Enter your password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                                className="py-2"
-                            />
-                        </Form.Group>
-                        <Button
-                            variant="dark"
-                            type="submit"
-                            className="w-100 py-2 rounded-pill"
-                        >
-                            Sign In
-                        </Button>
-                    </Form>
-                    <div className="text-center mt-4">
-                        <p className="text-muted"> new user? {' '}
-                            <button
-                                className="btn-link border-0 bg-transparent text-primary"
-                                onClick={() => {
-                                    handleCloseLogin()
-                                    handleShowSignup()
-                                }}
-                            >
-                                Sign up
-                            </button>
-                        </p>
-                    </div>
-                </Modal.Body>
-            </Modal>
-
+          
             {/* Signup Modal */}
-            <Modal show={showSignupModal} onHide={handleCloseSignup} centered>
-                <Modal.Header closeButton className="border-0 pb-0">
-                    <Modal.Title className="w-100 text-center">
-                        <h3 className="mb-0">Create Account</h3>
-                        <p className="text-muted mt-2">Join our fashion community</p>
-                    </Modal.Title>
-                </Modal.Header>
-                <Modal.Body className="pt-0">
-                    <Form onSubmit={handleSignup}>
-                        {authError && <div className="alert alert-danger">{authError}</div>}
-                        <Form.Group className="mb-3">
-                            <Form.Label>Email Address</Form.Label>
-                            <Form.Control
-                                type="email"
-                                placeholder="Enter your email"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                                required
-                                className="py-2"
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Password</Form.Label>
-                            <Form.Control
-                                type="password"
-                                placeholder="Create a password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                                className="py-2"
-                            />
-                            <Form.Text className="text-muted">
-                                8+ characters with letters and numbers
-                            </Form.Text>
-                        </Form.Group>
-                        <Button
-                            variant="dark"
-                            type="submit"
-                            className="w-100 py-2 rounded-pill"
-                        >
-                            Create Account
-                        </Button>
-                    </Form>
-                    <div className="terms-text mt-3 small text-muted text-center">
-                        By creating an account, you agree to our Terms and Privacy Policy.
-                    </div>
-                    <div className="text-center mt-4">
-                        <p className="text-muted">Already have an account?{' '}
-                            <button
-                                className="btn-link border-0 bg-transparent text-primary"
-                                onClick={() => {
-                                    handleCloseSignup()
-                                    handleShowLogin()
-                                }}
-                            >
-                                Sign in
-                            </button>
-                        </p>
-                    </div>
-                </Modal.Body>
-            </Modal>
-
+            
             {/* Premium Footer */}
             <footer className="footer bg-dark text-white py-5">
                 <Container>
@@ -403,5 +244,6 @@ export default function AuthPage() {
             {/* CSS Styles */}
 
         </div>
+         </>
     )
 }

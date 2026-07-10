@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { Button, Card, Col, Container, Form, ListGroup, Modal, Row } from "react-bootstrap";
 import { Truck } from "react-feather";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { clearCart } from "../features/orders/orderSlice";
 
-export default function CheckoutPage({ onClose }) {
+export default function CheckoutPage() {
     const orders = useSelector((state) => state.orders.orders);
     const generateWhatsAppMessage = () => {
         const message = orders.map(order =>
@@ -13,7 +16,7 @@ export default function CheckoutPage({ onClose }) {
         ).join('\n');
 
         const fullMessage = `🛍️ My Jiggy Wears Order:\n${message}\n\nSubtotal: ₦${subtotal.toLocaleString()}\nTotal: ₦${total.toLocaleString()}`;
-        window.open(`https://wa.me/601126219810?text=${encodeURIComponent(fullMessage)}`, '_blank');
+        window.open(`https://wa.me/2349162817078?text=${encodeURIComponent(fullMessage)}`, '_blank');
     };
     ;
     const [deliveryOption, setDeliveryOption] = useState('lagos');
@@ -22,14 +25,15 @@ export default function CheckoutPage({ onClose }) {
         phone: '',
         address: ''
     });
+    const navigate = useNavigate()
     const [showSuccessModal, setShowSuccessModal] = useState(false);
 
     // Calculate totals
     const subtotal = orders.reduce((sum, order) => sum + (parseInt(order.amount) * order.qty), 0);
     const shippingFee = deliveryOption === 'lagos' ? 6000 : 0;
     const total = subtotal + shippingFee;
-
-
+    const [lastReference, setLastReference] = useState('')
+    const dispatch = useDispatch()
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -51,23 +55,57 @@ export default function CheckoutPage({ onClose }) {
         setShowSuccessModal(true);
     };
 
-    const handlePaystackPayment = () => {
-        const handler = window.PaystackPop.setup({
-            key: "pk_test_b54ce5e374814df3d936a647db3b50c115092da4",
-            email: customerInfo.email || "customer@example.com",
-            amount: total * 100,
-            currency: "NGN",
-            ref: `jiggy_order_${new Date().getTime()}`,
-            callback: (response) => {
-                alert(`Payment successful! Reference: ${response.reference}`);
-                onClose();
-            },
-            onClose: () => alert("Payment process was canceled")
-        });
-        handler.openIframe();
-    };
-    const [transferModal, setTransferModal] = useState(false)
+   const handlePaystackPayment = () => {
+    if (!customerInfo.email) {
+        window.dispatchEvent(new CustomEvent('showNotification', {
+            detail: { message: 'Please enter your email address first.', type: 'error' }
+        }))
+        return
+    }
 
+    const handler = window.PaystackPop.setup({
+        key: "pk_live_d115a4925bdaddc85267c985ed933e68aa820c8d",
+        email: customerInfo.email,
+        amount: total * 100,
+        currency: "NGN",
+        ref: `jiggy_order_${new Date().getTime()}`,
+        callback: (response) => {
+            // No async here — fire and forget the save, don't await it
+            axios.post('https://jiggy-wears-api.onrender.com/order', {
+                reference: response.reference,
+                customer_email: customerInfo.email,
+                customer_phone: customerInfo.phone,
+                delivery_address: customerInfo.address,
+                items: orders.map(o => ({
+                    name: o.name,
+                    size: o.size,
+                    qty: o.qty,
+                    amount: o.amount,
+                    pic: o.pic
+                })),
+                subtotal,
+                shipping_fee: shippingFee,
+                total
+            }).catch(err => console.error('Order save failed:', err))
+
+            // These run immediately without waiting for axios
+            window.dispatchEvent(new CustomEvent('showNotification', {
+                detail: { message: `Payment successful! Ref: ${response.reference}` }
+            }))
+            setLastReference(response.reference)
+            dispatch(clearCart())
+            setShowSuccessModal(true)
+        },
+        onClose: () => {
+            window.dispatchEvent(new CustomEvent('showNotification', {
+                detail: { message: 'Payment cancelled.', type: 'error' }
+            }))
+        }
+    })
+    handler.openIframe()
+}
+    const [transferModal, setTransferModal] = useState(false)
+    
     return (
         <>
             <div className="d-flex flex-column min-vh-100">
@@ -77,7 +115,7 @@ export default function CheckoutPage({ onClose }) {
 
                     <Container className="py-5">
                         <Row>
-                            <Col lg={8}>
+                            <Col lg={8} className="order-2 order-lg-1">
                                 <Card className="mb-4">
                                     <Card.Body>
                                         <h4 className="mb-4">Delivery Options</h4>
@@ -130,8 +168,8 @@ export default function CheckoutPage({ onClose }) {
                                                 <Form.Control
                                                     as='textarea'
                                                     rows={3}
-                                                    name="phone"
-                                                    value={customerInfo.phone}
+                                                    name="address"
+                                                    value={customerInfo.address}
                                                     onChange={handleInputChange}
                                                     required
                                                 />
@@ -174,23 +212,23 @@ export default function CheckoutPage({ onClose }) {
                                                             <h6 className="text-md font-medium text-gray-700">Bank Details</h6>
                                                             <div className="space-y-2">
                                                                 <p className="text-sm text-gray-600">
-                                                                    <span className="font-semibold">Account Number:</span> 0107730748
+                                                                    <span className="font-semibold">Account Number:</span> 6989081002
                                                                 </p>
                                                                 <p className="text-sm text-gray-600">
-                                                                    <span className="font-semibold">Account Name:</span> Jiggy Store
+                                                                    <span className="font-semibold">Account Name:</span> Jiggy Official Wears
                                                                 </p>
                                                                 <p className="text-sm text-gray-600">
-                                                                    <span className="font-semibold">Bank:</span> Access Bank
+                                                                    <span className="font-semibold">Bank:</span> Moniepoint MFB
                                                                 </p>
                                                             </div>
                                                             <hr className="my-4 border-gray-200" />
                                                             <h6 className="text-md font-medium text-gray-700">Contact Information</h6>
                                                             <div className="space-y-2">
                                                                 <p className="text-sm text-gray-600">
-                                                                    <span className="font-semibold">WhatsApp:</span> +123-456-789-0123
+                                                                    <span className="font-semibold">WhatsApp:</span> +234-916-281-7078
                                                                 </p>
                                                                 <p className="text-sm text-gray-600">
-                                                                    <span className="font-semibold">Email:</span> contact@jiggystore.com
+                                                                    <span className="font-semibold">Email:</span> riddick803@gmail.com
                                                                 </p>
                                                                 <p className="text-sm text-gray-500 italic">
                                                                     Please share your payment receipt with us via WhatsApp or email.
@@ -213,7 +251,7 @@ export default function CheckoutPage({ onClose }) {
                                 </Card>
                             </Col>
 
-                            <Col lg={4}>
+                            <Col lg={4} className="order-1 order-lg-2 mb-4">
                                 <Card>
                                     <Card.Body>
                                         <h4 className="mb-4">Order Summary</h4>
@@ -278,19 +316,36 @@ export default function CheckoutPage({ onClose }) {
                                         <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="#28a745" />
                                     </svg>
                                 </div>
-                                <h4 className="mb-3">Order Submitted Successfully!</h4>
-                                <p className="text-muted mb-4">
-                                    Thank you for your order. We have sent a confirmation to your email.
+                                <h4 className="mb-3">Order Submitted!</h4>
+                                <p className="text-muted mb-1" style={{ fontSize: '0.85rem' }}>
+                                     Save your reference number to track your order:
                                 </p>
-                                <Button
-                                    variant="success"
-                                    onClick={() => {
-                                        setShowSuccessModal(false);
-                                        onClose();
-                                    }}
-                                >
-                                    Continue Shopping
-                                </Button>
+                                   <p className="fw-bold mb-4" style={{ letterSpacing: '1px', fontSize: '0.9rem' }}>
+                                      {lastReference}
+                                      </p>
+                                      <div className="d-grid gap-2">
+                                        <Button
+                variant="dark"
+                style={{ borderRadius: 0 }}
+                onClick={() => {
+                    setShowSuccessModal(false)
+                    navigate('/track')
+                }}
+            >
+                Track My Order
+            </Button>
+            <Button
+                variant="outline-dark"
+                style={{ borderRadius: 0 }}
+                onClick={() => {
+                    setShowSuccessModal(false)
+                    navigate('/home')
+                }}
+            >
+                Continue Shopping
+            </Button>
+                                      </div>
+                            
                             </Modal.Body>
                         </Modal>
                     </Container>
