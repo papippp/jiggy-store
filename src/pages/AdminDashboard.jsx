@@ -400,7 +400,7 @@ export default function AdminDashboard() {
                                                     className="w-100 mt-3"
                                                     style={{ backgroundColor: '#25D366', border: 'none', borderRadius: 0, fontSize: '0.8rem' }}
                                                     onClick={() => {
-                                                        const msg = `Hi, this is Jiggy Wears. Your order ${selectedOrder.reference.slice(-8)} is now ${selectedOrder.status}.`
+                                                        const msg = `Hi, this is The Jiggy Standard. Your order ${selectedOrder.reference.slice(-8)} is now ${selectedOrder.status}.`
                                                         window.open(`https://wa.me/${selectedOrder.customer_phone.replace(/\D/g, '')}?text=${encodeURIComponent(msg)}`, '_blank')
                                                     }}
                                                 >

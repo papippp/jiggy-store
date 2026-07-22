@@ -1,9 +1,9 @@
 const BASE_URL = 'https://jiggy-wears-api.onrender.com'
 
 import axios from 'axios'
-import  { useState } from 'react'
+import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import {  useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { setToken } from '../features/orders/orderSlice'
 
 export default function LandingPage() {
@@ -18,21 +18,21 @@ export default function LandingPage() {
     const [authError, setAuthError] = useState('')
     const [loading, setLoading] = useState(false)
     const openModal = (signupMode = false) => {
-    setIsSignup(signupMode)
-    setAuthError('')
-    setUsername('')
-    setPassword('')
-    setShowModal(true)
-}
+        setIsSignup(signupMode)
+        setAuthError('')
+        setUsername('')
+        setPassword('')
+        setShowModal(true)
+    }
 
     const handleLogin = async (e) => {
         e.preventDefault()
         setAuthError('')
         setLoading(true)
         try {
-            const res = await axios.post(`${BASE_URL}/login`, {username, password})
-            if(res.data.auth) {
-                dispatch(setToken({token: res.data.token, username}))
+            const res = await axios.post(`${BASE_URL}/login`, { username, password })
+            if (res.data.auth) {
+                dispatch(setToken({ token: res.data.token, username }))
                 setShowModal(false)
                 setUsername('')
                 setPassword('')
@@ -55,10 +55,10 @@ export default function LandingPage() {
         setAuthError('')
         setLoading(true)
         try {
-            await axios.post(`${BASE_URL}/signup`, {username, password})
-            const res = await axios.post(`${BASE_URL}/login`, {username,password})
-            if(res.data.auth) {
-                dispatch(setToken({token : res.data.token, username}))
+            await axios.post(`${BASE_URL}/signup`, { username, password })
+            const res = await axios.post(`${BASE_URL}/login`, { username, password })
+            if (res.data.auth) {
+                dispatch(setToken({ token: res.data.token, username }))
                 setShowModal(false)
                 setUsername('')
                 setPassword('')
@@ -73,9 +73,9 @@ export default function LandingPage() {
         }
     }
 
-  return (
-    <>
-         {/* ── LANDING PAGE ── */}
+    return (
+        <>
+            {/* ── LANDING PAGE ── */}
             <div style={{
                 height: '100vh',
                 width: '100vw',
@@ -117,9 +117,22 @@ export default function LandingPage() {
                         fontSize: '1.1rem',
                         letterSpacing: '6px',
                         fontWeight: 300,
-                        textTransform: 'uppercase'
+                        textTransform: 'uppercase',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px'
                     }}>
-                        JIGGY <span style={{ fontWeight: 600 }}>WEARS</span>
+                        <img
+                            src='https://res.cloudinary.com/dqcztgs4v/image/upload/v1784291469/photo_6255724771660207207_x_elph2s.jpg'
+                            alt='Jiggy Wears logo'
+                            style={{
+                                width: '100px',
+                                height: '100px',
+                                borderRadius: '50%',
+                                objectFit: 'cover',
+                                border: '1px solid rgba(255,255,255,0.3)'
+                            }}
+                        />
                     </div>
 
                     {/* Top right — show username if logged in, else login/signup buttons */}
@@ -148,7 +161,8 @@ export default function LandingPage() {
                                         textTransform: 'uppercase',
                                         cursor: 'pointer',
                                         fontFamily: 'Jost, sans-serif',
-                                        transition: 'all 0.2s ease'
+                                        transition: 'all 0.2s ease',
+                                        borderRadius: '20px'
                                     }}
                                     onMouseEnter={e => e.target.style.borderColor = '#fff'}
                                     onMouseLeave={e => e.target.style.borderColor = 'rgba(255,255,255,0.4)'}
@@ -167,7 +181,8 @@ export default function LandingPage() {
                                         textTransform: 'uppercase',
                                         cursor: 'pointer',
                                         fontFamily: 'Jost, sans-serif',
-                                        transition: 'all 0.2s ease'
+                                        transition: 'all 0.2s ease',
+                                        borderRadius: '20px'
                                     }}
                                     onMouseEnter={e => e.target.style.background = 'rgba(255,255,255,0.2)'}
                                     onMouseLeave={e => e.target.style.background = 'rgba(255,255,255,0.1)'}
@@ -208,13 +223,39 @@ export default function LandingPage() {
                         color: '#fff',
                         fontFamily: 'Cormorant Garamond, serif',
                         fontWeight: 300,
-                        fontSize: 'clamp(3rem, 9vw, 7rem)',
-                        letterSpacing: '6px',
-                        lineHeight: 1,
+                        lineHeight: 1.1,
                         marginBottom: '16px',
-                        textTransform: 'uppercase'
+                        textTransform: 'uppercase',
+                        textAlign: 'center'
                     }}>
-                        Jiggy Wears
+                        <span style={{
+                            display: 'block',
+                            fontSize: 'clamp(0.9rem, 3vw, 1.4rem)',
+                            letterSpacing: '6px',
+                            color: 'rgba(255,255,255,0.7)',
+                            marginBottom: '8px',
+                            fontWeight: 300
+                        }}>
+                            The
+                        </span>
+                        <span style={{
+                            display: 'block',
+                            fontSize: 'clamp(3rem, 9vw, 7rem)',
+                            letterSpacing: '4px',
+                            fontWeight: 300,
+                            lineHeight: 1
+                        }}>
+                            Jiggy
+                        </span>
+                        <span style={{
+                            display: 'block',
+                            fontSize: 'clamp(1.8rem, 6vw, 4.5rem)',
+                            letterSpacing: '8px',
+                            fontWeight: 200,
+                            color: 'rgba(255,255,255,0.85)'
+                        }}>
+                            Standard
+                        </span>
                     </h1>
 
                     <p style={{
@@ -259,7 +300,7 @@ export default function LandingPage() {
                     </button>
 
                     {/* Secondary nav links */}
-                    <div className="landing-nav-links"  style={{ display: 'flex', gap: '28px', alignItems: 'center' }}>
+                    <div className="landing-nav-links" style={{ display: 'flex', gap: '28px', alignItems: 'center' }}>
                         {['Men', 'Women', 'Track Order'].map((label, i) => (
                             <span key={label} style={{ display: 'flex', alignItems: 'center', gap: '28px' }}>
                                 {i > 0 && <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: '0.5rem' }}>·</span>}
@@ -360,7 +401,7 @@ export default function LandingPage() {
                                 marginBottom: '8px',
                                 fontFamily: 'Jost, sans-serif'
                             }}>
-                                Jiggy Wears
+                                The Jiggy Standard
                             </p>
                             <h2 style={{
                                 fontFamily: 'Cormorant Garamond, serif',
@@ -533,6 +574,6 @@ export default function LandingPage() {
                 </div>
             )}
         </>
-    
-  )
+
+    )
 }

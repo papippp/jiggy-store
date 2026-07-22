@@ -43,7 +43,10 @@ export default function OrdersPage({ onShow, onClose }) {
                         <X size={24} />
                     </Button>
                 </div>
+
+
             </Offcanvas.Header>
+
 
             <Offcanvas.Body className="d-flex flex-column">
                 {orders.length > 0 ? (

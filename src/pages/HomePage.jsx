@@ -19,38 +19,38 @@ export default function HomePage() {
             <div className='luxury-store'>
                 {/*Main Navigation*/}
                 <NavBar handleShow={handleShow} />
-                <Container fluid className='main-content'>
-                    <Row className='welcome-section'>
-                        <Col>{
+                <Container fluid className='main-content px-0'>
+                    <Row className='welcome-section mx-0'>
+                        <Col className='px-0'>{
                             userEmail ? (
                                 <>
-                                <p
-                                 style={{
-                    fontSize: '0.7rem',
-                    letterSpacing: '3px',
-                    textTransform: 'uppercase',
-                    color: 'rgba(255,255,255,0.6)',
-                    marginBottom: '8px',
-                    fontFamily: 'Jost, sans-serif'
-                }}
-                                >
-                                    Welcome Back
-                                </p>
-                                <h1 className='welcome-heading'>{userEmail}</h1>
+                                    <p
+                                        style={{
+                                            fontSize: '0.7rem',
+                                            letterSpacing: '3px',
+                                            textTransform: 'uppercase',
+                                            color: 'rgba(255,255,255,0.6)',
+                                            marginBottom: '8px',
+                                            fontFamily: 'Jost, sans-serif'
+                                        }}
+                                    >
+                                        Welcome Back
+                                    </p>
+                                    <h1 className='welcome-heading'>{userEmail}</h1>
                                 </>
                             ) : (
                                 <>
-                                <h1 className="welcome-heading">Welcome to Jiggy Wears</h1>
-                            <p className="welcome-subheading">Curated Luxury Apparel</p>
+                                    <h1 className="welcome-heading">Welcome to The Jiggy Standard</h1>
+                                    <p className="welcome-subheading">Curated Luxury Apparel</p>
                                 </>
                             )
                         }
-                            
+
                         </Col>
 
                     </Row>
-                    <div style={{ marginBottom: '2rem' }}>
-                        <Carousel fade interval={5000} pause='hover'  controls={true} indicators={true}>
+                    <div style={{ marginBottom: '0' }}>
+                        <Carousel fade interval={5000} pause='hover' controls={true} indicators={true}>
                             {/* Slide 1: Information */}
                             <Carousel.Item>
                                 <div className="carousel-image-container">
@@ -91,7 +91,7 @@ export default function HomePage() {
                             </Carousel.Item>
                         </Carousel>
                     </div>
-                    <Row className="profile-section">
+                    <Row className="profile-section mx-0">
                         <ProfileMianBody />
                         <CreateOrderModal show={show} handleClose={handleClose} />
                     </Row>

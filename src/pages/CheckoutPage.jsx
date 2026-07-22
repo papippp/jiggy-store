@@ -54,58 +54,61 @@ export default function CheckoutPage() {
         });
         setShowSuccessModal(true);
     };
-
-   const handlePaystackPayment = () => {
-    if (!customerInfo.email) {
-        window.dispatchEvent(new CustomEvent('showNotification', {
-            detail: { message: 'Please enter your email address first.', type: 'error' }
-        }))
-        return
-    }
-
-    const handler = window.PaystackPop.setup({
-        key: "pk_live_d115a4925bdaddc85267c985ed933e68aa820c8d",
-        email: customerInfo.email,
-        amount: total * 100,
-        currency: "NGN",
-        ref: `jiggy_order_${new Date().getTime()}`,
-        callback: (response) => {
-            // No async here — fire and forget the save, don't await it
-            axios.post('https://jiggy-wears-api.onrender.com/order', {
-                reference: response.reference,
-                customer_email: customerInfo.email,
-                customer_phone: customerInfo.phone,
-                delivery_address: customerInfo.address,
-                items: orders.map(o => ({
-                    name: o.name,
-                    size: o.size,
-                    qty: o.qty,
-                    amount: o.amount,
-                    pic: o.pic
-                })),
-                subtotal,
-                shipping_fee: shippingFee,
-                total
-            }).catch(err => console.error('Order save failed:', err))
-
-            // These run immediately without waiting for axios
+    const [paying, setPaying] = useState(false)
+    const handlePaystackPayment = () => {
+        if (!customerInfo.email) {
             window.dispatchEvent(new CustomEvent('showNotification', {
-                detail: { message: `Payment successful! Ref: ${response.reference}` }
+                detail: { message: 'Please enter your email address first.', type: 'error' }
             }))
-            setLastReference(response.reference)
-            dispatch(clearCart())
-            setShowSuccessModal(true)
-        },
-        onClose: () => {
-            window.dispatchEvent(new CustomEvent('showNotification', {
-                detail: { message: 'Payment cancelled.', type: 'error' }
-            }))
+            return
         }
-    })
-    handler.openIframe()
-}
+        setPaying(true)
+
+        const handler = window.PaystackPop.setup({
+            key: "pk_live_d115a4925bdaddc85267c985ed933e68aa820c8d",
+            email: customerInfo.email,
+            amount: total * 100,
+            currency: "NGN",
+            ref: `jiggy_order_${new Date().getTime()}`,
+            callback: (response) => {
+                // No async here — fire and forget the save, don't await it
+                setPaying(false)
+                axios.post('https://jiggy-wears-api.onrender.com/order', {
+                    reference: response.reference,
+                    customer_email: customerInfo.email,
+                    customer_phone: customerInfo.phone,
+                    delivery_address: customerInfo.address,
+                    items: orders.map(o => ({
+                        name: o.name,
+                        size: o.size,
+                        qty: o.qty,
+                        amount: o.amount,
+                        pic: o.pic
+                    })),
+                    subtotal,
+                    shipping_fee: shippingFee,
+                    total
+                }).catch(err => console.error('Order save failed:', err))
+
+                // These run immediately without waiting for axios
+                window.dispatchEvent(new CustomEvent('showNotification', {
+                    detail: { message: `Payment successful! Ref: ${response.reference}` }
+                }))
+                setLastReference(response.reference)
+                dispatch(clearCart())
+                setShowSuccessModal(true)
+            },
+            onClose: () => {
+                setPaying(false)
+                window.dispatchEvent(new CustomEvent('showNotification', {
+                    detail: { message: 'Payment cancelled.', type: 'error' }
+                }))
+            }
+        })
+        handler.openIframe()
+    }
     const [transferModal, setTransferModal] = useState(false)
-    
+
     return (
         <>
             <div className="d-flex flex-column min-vh-100">
@@ -151,7 +154,7 @@ export default function CheckoutPage() {
                                                     required
                                                 />
                                             </Form.Group>
-                                             <Form.Group className="mb-3">
+                                            <Form.Group className="mb-3">
                                                 <Form.Label>Phone number </Form.Label>
                                                 <Form.Control
                                                     type="text"
@@ -177,12 +180,28 @@ export default function CheckoutPage() {
 
                                             <div className="d-grid gap-2">
                                                 <Button
-                                                    variant="dark"
-                                                    size="lg"
-                                                    type="button"
                                                     onClick={handlePaystackPayment}
+                                                    disabled={paying}
+                                                    variant="dark"
+                                                    style={{
+                                                        borderRadius: 0,
+                                                        width: '100%',
+                                                        padding: '14px',
+                                                        fontSize: '0.85rem',
+                                                        letterSpacing: '2px',
+                                                        backgroundColor: paying ? '#555' : 'var(--jw-gold)',
+                                                        border: 'none',
+                                                        transition: 'background-color 0.2s ease'
+                                                    }}
                                                 >
-                                                    Pay with Paystack
+                                                    {paying ? (
+                                                        <>
+                                                            <span className="spinner-border spinner-border-sm me-2" role="status" />
+                                                            Processing...
+                                                        </>
+                                                    ) : (
+                                                        `Pay ₦${total.toLocaleString()}`
+                                                    )}
                                                 </Button>
                                                 <Button
                                                     variant="dark"
@@ -266,7 +285,7 @@ export default function CheckoutPage() {
                                                                 style={{
                                                                     width: '60px',
                                                                     height: '60px',
-                                                                    backgroundImage: `url(${ order.pic ||order.image || 'https://placehold.co/150x150'})`,
+                                                                    backgroundImage: `url(${order.pic || order.image || 'https://placehold.co/150x150'})`,
                                                                     backgroundSize: 'cover',
                                                                     backgroundPosition: 'center'
                                                                 }}
@@ -318,34 +337,34 @@ export default function CheckoutPage() {
                                 </div>
                                 <h4 className="mb-3">Order Submitted!</h4>
                                 <p className="text-muted mb-1" style={{ fontSize: '0.85rem' }}>
-                                     Save your reference number to track your order:
+                                    Save your reference number to track your order:
                                 </p>
-                                   <p className="fw-bold mb-4" style={{ letterSpacing: '1px', fontSize: '0.9rem' }}>
-                                      {lastReference}
-                                      </p>
-                                      <div className="d-grid gap-2">
-                                        <Button
-                variant="dark"
-                style={{ borderRadius: 0 }}
-                onClick={() => {
-                    setShowSuccessModal(false)
-                    navigate('/track')
-                }}
-            >
-                Track My Order
-            </Button>
-            <Button
-                variant="outline-dark"
-                style={{ borderRadius: 0 }}
-                onClick={() => {
-                    setShowSuccessModal(false)
-                    navigate('/home')
-                }}
-            >
-                Continue Shopping
-            </Button>
-                                      </div>
-                            
+                                <p className="fw-bold mb-4" style={{ letterSpacing: '1px', fontSize: '0.9rem' }}>
+                                    {lastReference}
+                                </p>
+                                <div className="d-grid gap-2">
+                                    <Button
+                                        variant="dark"
+                                        style={{ borderRadius: 0 }}
+                                        onClick={() => {
+                                            setShowSuccessModal(false)
+                                            navigate('/track')
+                                        }}
+                                    >
+                                        Track My Order
+                                    </Button>
+                                    <Button
+                                        variant="outline-dark"
+                                        style={{ borderRadius: 0 }}
+                                        onClick={() => {
+                                            setShowSuccessModal(false)
+                                            navigate('/home')
+                                        }}
+                                    >
+                                        Continue Shopping
+                                    </Button>
+                                </div>
+
                             </Modal.Body>
                         </Modal>
                     </Container>

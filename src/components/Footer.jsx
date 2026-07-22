@@ -34,22 +34,25 @@ export default function Footer() {
 
                             </address>
                             <div className="social-links mt-4">
-                                <Button variant="outline-light"
-                                 size="sm"
-                                  className="me-2 rounded-circle"
-                                  as={Link}
-                                  to='https://www.instagram.com/jiggyofficial_ng?igsh=YXRrcGticXNrYm5w'
-                                  >
-                                    <i className="bi bi-instagram"></i>
-                                </Button>
-                                <Button variant="outline-light" 
-                                size="sm"
-                                 className="me-2 rounded-circle"
-                                 as={Link}
-                                 to='https://www.tiktok.com/@jiggyofficial._ng?_r=1&_t=ZS-97uPoYmnhHF'
-                                 >
-                                    <i className="bi bi-tiktok"></i>
-                                </Button>
+                                <a
+                                    href='https://www.instagram.com/jiggyofficial_ng?igsh=YXRrcGticXNrYm5w'
+                                    target='_blank'
+                                    rel='noreferrer'
+                                >
+                                    <Button variant="outline-light" size="sm" className="me-2 rounded-circle">
+                                        <i className="bi bi-instagram"></i>
+                                    </Button>
+                                </a>
+                                <a
+                                    href='https://www.tiktok.com/@jiggyofficial._ng?_r=1&_t=ZS-97uPoYmnhHF'
+                                    target='_blank'
+                                    rel='noreferrer'
+                                >
+                                    <Button variant="outline-light" size="sm" className="me-2 rounded-circle">
+                                        <i className="bi bi-tiktok"></i>
+                                    </Button>
+                                </a>
+
                             </div>
                         </Col>
                     </Row>
@@ -58,7 +61,7 @@ export default function Footer() {
                         <Col>
                             <hr className="footer-divider" />
                             <p className="footer-copyright">
-                                &copy; {new Date().getFullYear()} JIGGY WEARS. All rights reserved.
+                                &copy; {new Date().getFullYear()} THE JIGGY STANDARD. All rights reserved.
                                 <span className="float-end">Built by: <a href="https://portfolio-papippps-projects.vercel.app/" className="developer-link">$PPP</a></span>
                             </p>
                         </Col>

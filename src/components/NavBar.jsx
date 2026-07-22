@@ -9,11 +9,11 @@ import axios from "axios";
 
 
 export default function NavBar({ handleShow }) {
-   
-   const dispatch = useDispatch()
-   const navigate = useNavigate()
-   const isAdmin = useSelector((state) => state.orders.isAdmin)
-   const token = useSelector((state) => state.orders.token)  
+
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
+    const isAdmin = useSelector((state) => state.orders.isAdmin)
+    const token = useSelector((state) => state.orders.token)
     const handleLogout = () => {
         dispatch(logout())
     }
@@ -32,39 +32,39 @@ export default function NavBar({ handleShow }) {
     const handleCloseSignup = () => setShowSignupModal(false)
     const handleShowSignup = () => setShowSignupModal(true)
 
-    
 
-     const handleSignup = async (e) => {
-            e.preventDefault()
-            setAuthError('')
-            try {
-                await axios.post(`${BASE_URL}/signup`, {username, password})
-                const res = await axios.post(`${BASE_URL}/login`, {username, password})
-                if (res.data.auth) {
-                    dispatch(setToken({token : res.data.token, username}))
-                    handleCloseSignup()
-                    navigate('/home')
-                }
-            } catch (error) {
-                setAuthError("Could not create account. Username may already exist.")
+
+    const handleSignup = async (e) => {
+        e.preventDefault()
+        setAuthError('')
+        try {
+            await axios.post(`${BASE_URL}/signup`, { username, password })
+            const res = await axios.post(`${BASE_URL}/login`, { username, password })
+            if (res.data.auth) {
+                dispatch(setToken({ token: res.data.token, username }))
+                handleCloseSignup()
+                navigate('/home')
             }
+        } catch (error) {
+            setAuthError("Could not create account. Username may already exist.")
         }
+    }
 
-        const handleLogin = async (e) => {
-                e.preventDefault()
-                setAuthError('')
-                try {
-                   const res = await axios.post(`${BASE_URL}/login`, {username, password})
-                   if (res.data.auth) {
-                    dispatch(setToken({token : res.data.token, username}))
-                    handleCloseLogin()
-                    navigate('/home')
-                   }
-                } catch (error) {
-                    setAuthError("Invalid email or password")
-                }
+    const handleLogin = async (e) => {
+        e.preventDefault()
+        setAuthError('')
+        try {
+            const res = await axios.post(`${BASE_URL}/login`, { username, password })
+            if (res.data.auth) {
+                dispatch(setToken({ token: res.data.token, username }))
+                handleCloseLogin()
+                navigate('/home')
             }
-    
+        } catch (error) {
+            setAuthError("Invalid email or password")
+        }
+    }
+
 
 
     return (
@@ -72,15 +72,38 @@ export default function NavBar({ handleShow }) {
             <Navbar expand='lg' className='main-navbar'>
                 <Container fluid>
                     <Navbar.Brand className="brand-logo" >
-                        <Nav.Link as={Link} to={'/home'} >
-                        <span className="luxury-font">JIGGY</span> <span className="thin-font">WEARS</span>
+                        <Nav.Link as={Link} to={'/'} >
+                            <div style={{
+                                color: '#fff',
+                                fontFamily: 'Cormorant Garamond, serif',
+                                fontSize: '1.1rem',
+                                letterSpacing: '6px',
+                                fontWeight: 300,
+                                textTransform: 'uppercase',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '12px'
+                            }}>
+                                <img
+                                    src='https://res.cloudinary.com/dqcztgs4v/image/upload/v1784291469/photo_6255724771660207207_x_elph2s.jpg'
+                                    alt='Jiggy Wears logo'
+                                    style={{
+                                        width: '100px',
+                                        height: '100px',
+                                        borderRadius: '50%',
+                                        objectFit: 'cover',
+                                        border: '1px solid rgba(255,255,255,0.3)'
+                                    }}
+                                />
+                            </div>
+
                         </Nav.Link>
                     </Navbar.Brand>
 
-                    <Navbar.Toggle  aria-controls="navbar-collapse"
-                     style={{ borderColor: 'rgba(255,255,255,0.3)' }}
-                     />
-                       
+                    <Navbar.Toggle aria-controls="navbar-collapse"
+                        style={{ borderColor: 'rgba(255,255,255,0.3)' }}
+                    />
+
 
                     <Navbar.Collapse id="navbar-collapse" className="navbar-collapse-custom" >
                         <Nav className='mx-auto'>
@@ -89,7 +112,7 @@ export default function NavBar({ handleShow }) {
                             <Nav.Link as={Link} to={'/women'}  >Women</Nav.Link>
                             <Nav.Link as={Link} to={'/track'}>Track Order</Nav.Link>
                             {isAdmin && (
-                                <Nav.Link as={Link} to={'/admin'} style={{color: '#ffc107'}}>
+                                <Nav.Link as={Link} to={'/admin'} style={{ color: '#ffc107' }}>
                                     Dashboard
                                 </Nav.Link>
                             )}
@@ -104,21 +127,21 @@ export default function NavBar({ handleShow }) {
 
 
 
-                           {token ? (<Button
+                            {token ? (<Button
                                 variant="link"
                                 onClick={handleLogout}
                                 className="logout-btn"
                             >
                                 <i className="bi bi-box-arrow-right fs-5"></i>
                             </Button>) :
-                            (<Button
-                                variant="outline-light"
-                                size="sm"
-                                onClick={handleShowLogin}
-                                className="logout-btn"
-                            >
-                                <i className="bi bi-person"></i>
-                            </Button>)}
+                                (<Button
+                                    variant="outline-light"
+                                    size="sm"
+                                    onClick={handleShowLogin}
+                                    className="logout-btn"
+                                >
+                                    <i className="bi bi-person"></i>
+                                </Button>)}
                         </Nav>
 
                     </Navbar.Collapse>
@@ -127,123 +150,123 @@ export default function NavBar({ handleShow }) {
 
             </Navbar>
             <Modal show={showLoginModal} onHide={handleCloseLogin} centered>
-                            <Modal.Header closeButton className="border-0 pb-0">
-                                <Modal.Title className="w-100 text-center">
-                                    <h3 className="mb-0">Welcome Back</h3>
-                                    <p className="text-muted mt-2">Sign in to your account</p>
-                                </Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body className="pt-0">
-                                <Form onSubmit={handleLogin}>
-                                    {authError && <div className="alert alert-danger">{authError}</div>}
-                                    <Form.Group className="mb-3">
-                                        <Form.Label>Email Address</Form.Label>
-                                        <Form.Control
-                                            type="text"
-                                            placeholder="Enter your email"
-                                            value={username}
-                                            onChange={(e) => setUsername(e.target.value)}
-                                            required
-                                            className="py-2"
-                                        />
-                                    </Form.Group>
-                                    <Form.Group className="mb-3">
-                                        <Form.Label>Password</Form.Label>
-                                        <Form.Control
-                                            type="password"
-                                            placeholder="Enter your password"
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            required
-                                            className="py-2"
-                                        />
-                                    </Form.Group>
-                                    <Button
-                                        variant="dark"
-                                        type="submit"
-                                        className="w-100 py-2 rounded-pill"
-                                    >
-                                        Sign In
-                                    </Button>
-                                </Form>
-                                <div className="text-center mt-4">
-                                    <p className="text-muted"> new user? {' '}
-                                        <button
-                                            className="btn-link border-0 bg-transparent text-primary"
-                                            onClick={() => {
-                                                handleCloseLogin()
-                                                handleShowSignup()
-                                            }}
-                                        >
-                                            Sign up
-                                        </button>
-                                    </p>
-                                </div>
-                            </Modal.Body>
-                        </Modal>
+                <Modal.Header closeButton className="border-0 pb-0">
+                    <Modal.Title className="w-100 text-center">
+                        <h3 className="mb-0">Welcome Back</h3>
+                        <p className="text-muted mt-2">Sign in to your account</p>
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="pt-0">
+                    <Form onSubmit={handleLogin}>
+                        {authError && <div className="alert alert-danger">{authError}</div>}
+                        <Form.Group className="mb-3">
+                            <Form.Label>Email Address</Form.Label>
+                            <Form.Control
+                                type="text"
+                                placeholder="Enter your email"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                required
+                                className="py-2"
+                            />
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Password</Form.Label>
+                            <Form.Control
+                                type="password"
+                                placeholder="Enter your password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                                className="py-2"
+                            />
+                        </Form.Group>
+                        <Button
+                            variant="dark"
+                            type="submit"
+                            className="w-100 py-2 rounded-pill"
+                        >
+                            Sign In
+                        </Button>
+                    </Form>
+                    <div className="text-center mt-4">
+                        <p className="text-muted"> new user? {' '}
+                            <button
+                                className="btn-link border-0 bg-transparent text-primary"
+                                onClick={() => {
+                                    handleCloseLogin()
+                                    handleShowSignup()
+                                }}
+                            >
+                                Sign up
+                            </button>
+                        </p>
+                    </div>
+                </Modal.Body>
+            </Modal>
 
-                         {/* Signup Modal */}
-                                    <Modal show={showSignupModal} onHide={handleCloseSignup} centered>
-                                        <Modal.Header closeButton className="border-0 pb-0">
-                                            <Modal.Title className="w-100 text-center">
-                                                <h3 className="mb-0">Create Account</h3>
-                                                <p className="text-muted mt-2">Join our fashion community</p>
-                                            </Modal.Title>
-                                        </Modal.Header>
-                                        <Modal.Body className="pt-0">
-                                            <Form onSubmit={handleSignup}>
-                                                {authError && <div className="alert alert-danger">{authError}</div>}
-                                                <Form.Group className="mb-3">
-                                                    <Form.Label>Email Address</Form.Label>
-                                                    <Form.Control
-                                                        type="text"
-                                                        placeholder="Enter your email"
-                                                        value={username}
-                                                        onChange={(e) => setUsername(e.target.value)}
-                                                        required
-                                                        className="py-2"
-                                                    />
-                                                </Form.Group>
-                                                <Form.Group className="mb-3">
-                                                    <Form.Label>Password</Form.Label>
-                                                    <Form.Control
-                                                        type="password"
-                                                        placeholder="Create a password"
-                                                        value={password}
-                                                        onChange={(e) => setPassword(e.target.value)}
-                                                        required
-                                                        className="py-2"
-                                                    />
-                                                    <Form.Text className="text-muted">
-                                                        8+ characters with letters and numbers
-                                                    </Form.Text>
-                                                </Form.Group>
-                                                <Button
-                                                    variant="dark"
-                                                    type="submit"
-                                                    className="w-100 py-2 rounded-pill"
-                                                >
-                                                    Create Account
-                                                </Button>
-                                            </Form>
-                                            <div className="terms-text mt-3 small text-muted text-center">
-                                                By creating an account, you agree to our Terms and Privacy Policy.
-                                            </div>
-                                            <div className="text-center mt-4">
-                                                <p className="text-muted">Already have an account?{' '}
-                                                    <button
-                                                        className="btn-link border-0 bg-transparent text-primary"
-                                                        onClick={() => {
-                                                            handleCloseSignup()
-                                                            handleShowLogin()
-                                                        }}
-                                                    >
-                                                        Sign in
-                                                    </button>
-                                                </p>
-                                            </div>
-                                        </Modal.Body>
-                                    </Modal>
+            {/* Signup Modal */}
+            <Modal show={showSignupModal} onHide={handleCloseSignup} centered>
+                <Modal.Header closeButton className="border-0 pb-0">
+                    <Modal.Title className="w-100 text-center">
+                        <h3 className="mb-0">Create Account</h3>
+                        <p className="text-muted mt-2">Join our fashion community</p>
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="pt-0">
+                    <Form onSubmit={handleSignup}>
+                        {authError && <div className="alert alert-danger">{authError}</div>}
+                        <Form.Group className="mb-3">
+                            <Form.Label>Email Address</Form.Label>
+                            <Form.Control
+                                type="text"
+                                placeholder="Enter your email"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                required
+                                className="py-2"
+                            />
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Password</Form.Label>
+                            <Form.Control
+                                type="password"
+                                placeholder="Create a password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                                className="py-2"
+                            />
+                            <Form.Text className="text-muted">
+                                8+ characters with letters and numbers
+                            </Form.Text>
+                        </Form.Group>
+                        <Button
+                            variant="dark"
+                            type="submit"
+                            className="w-100 py-2 rounded-pill"
+                        >
+                            Create Account
+                        </Button>
+                    </Form>
+                    <div className="terms-text mt-3 small text-muted text-center">
+                        By creating an account, you agree to our Terms and Privacy Policy.
+                    </div>
+                    <div className="text-center mt-4">
+                        <p className="text-muted">Already have an account?{' '}
+                            <button
+                                className="btn-link border-0 bg-transparent text-primary"
+                                onClick={() => {
+                                    handleCloseSignup()
+                                    handleShowLogin()
+                                }}
+                            >
+                                Sign in
+                            </button>
+                        </p>
+                    </div>
+                </Modal.Body>
+            </Modal>
             <FloatingCart onClick={handleShowOrder} />
             <OrdersPage onShow={showOrder} onClose={handleCloseOrder} />
 
