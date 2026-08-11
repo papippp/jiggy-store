@@ -5,24 +5,26 @@ import { useEffect } from 'react'
 import { fetchProduct, filteredProductsByGender, setSearchQuery } from '../features/orders/orderSlice'
 import ProductSkeleton from './ProductSkeleton'
 
-export default function ProfileMianBody({ genderFilter , categoryFilter}) {
-    const { products, loading, error, filteredProducts,searchQuery } = useSelector((state) => state.orders)
+export default function ProfileMianBody({ genderFilter, categoryFilter }) {
+    const { products, loading, error, filteredProducts, searchQuery } = useSelector((state) => state.orders)
     const dispatch = useDispatch()
 
     useEffect(() => {
-        dispatch(fetchProduct())
-    }, [dispatch])
+        if (products.length === 0) {
+            dispatch(fetchProduct())
+        }
+    }, [dispatch, products.length])
 
     useEffect(() => {
         if (genderFilter && products.length > 0) {
             dispatch(filteredProductsByGender(genderFilter))
         }
 
-    }, [genderFilter, products, dispatch])
+    }, [genderFilter, products.length, dispatch])
 
     const displayProducts = (genderFilter ? filteredProducts : products)
-    .filter(product => product.name.toLowerCase().includes((searchQuery || '').toLowerCase()))
-    .filter(product => !categoryFilter || (product.category || '').toLowerCase() === categoryFilter.toLowerCase())
+        .filter(product => product.name.toLowerCase().includes((searchQuery || '').toLowerCase()))
+        .filter(product => !categoryFilter || (product.category || '').toLowerCase() === categoryFilter.toLowerCase())
 
     return (
         <Container className="profile-container py-5">

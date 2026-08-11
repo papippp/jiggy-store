@@ -103,8 +103,8 @@ export const deleteProduct = createAsyncThunk(
     'product/delete',
     async (id) => {
         try {
-            const response = axios.delete(`${BASE_URL}/product/${id}`)
-            return response.data
+            axios.delete(`${BASE_URL}/product/${id}`)
+            return id
         }
         catch (error) {
             console.error(error)
@@ -200,25 +200,40 @@ const orderSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(fetchProduct.fulfilled, (state, action) => {
-                state.products = action.payload
-                state.filteredProducts = action.payload
-                state.loading = false
 
+            .addCase(fetchProduct.pending, (state) => {
+                state.loading = true
+                state.error = null
+            })
+            .addCase(fetchProduct.fulfilled, (state, action) => {
+                state.products = Array.isArray(action.payload) ? action.payload : []
+                state.filteredProducts = Array.isArray(action.payload) ? action.payload : []
+                state.loading = false
+                state.error = null
+
+            })
+            .addCase(fetchProduct.rejected, (state) => {
+                state.loading = false
+                state.error = 'Failed to load products'
             })
             .addCase(createProduct.fulfilled, (state, action) => {
-                state.products = [action.payload, ...state.products]
-
+                if (action.payload) {
+                    state.products = [action.payload, ...state.products]
+                    state.filteredProducts = [action.payload, ...state.filteredProducts]
+                }
             })
             .addCase(updateProduct.fulfilled, (state, action) => {
-                const index = state.products.findIndex(product => product.id === action.payload.id)
-                if (index !== -1) {
-                    state.products[index] = action.payload
-                }
+                if (action.payload) {
+                    const index = state.products.findIndex(product => product.id === action.payload.id)
+                    if (index !== -1) state.products[index] = action.payload
+                    const fi = state.filteredProducts.findIndex(p => p.id === action.payload.id)
+                    if (fi !== -1) state.filteredProducts[fi] = action.payload
 
+                }
             })
             .addCase(deleteProduct.fulfilled, (state, action) => {
                 state.products = state.products.filter(product => product.id !== action.payload.id)
+                state.filteredProducts = state.filteredProducts.filter(p => p.id !== action.payload.id)
             })
 
     }

@@ -1,7 +1,7 @@
 
 export default function ProductSkeleton() {
-  return (
-    <div className="product-card skeleton-card">
+    return (
+        <div className="product-card skeleton-card">
             <div className="skeleton-image" />
             <div className="skeleton-body">
                 <div className="skeleton-line skeleton-title" />
@@ -16,5 +16,5 @@ export default function ProductSkeleton() {
                 <div className="skeleton-line skeleton-btn" />
             </div>
         </div>
-  )
+    )
 }
