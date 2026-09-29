@@ -4,12 +4,12 @@ import { updateProduct } from '../features/orders/orderSlice'
 import { Button, Col, Form, Modal, Row, Spinner } from 'react-bootstrap'
 import { parseStock } from '../utils/stockHelper'
 
-
 const CLOUDINARY_CLOUD_NAME = 'dqcztgs4v'
 const CLOUDINARY_UPLOAD_PRESET = 'jiggy_unsigned'
 
 export default function UpdateProduct({ product, show, handleClose }) {
     const dispatch = useDispatch()
+
     const [name, setName] = useState(product.name)
     const [description, setDescription] = useState(product.description)
     const [amount, setAmount] = useState(product.amount)
@@ -20,13 +20,11 @@ export default function UpdateProduct({ product, show, handleClose }) {
     const [validationError, setValidationError] = useState('')
     const [uploading, setUploading] = useState({ front: false, back: false })
 
-    // Stock — null means no tracking (unlimited), object means tracking per size
-    const [trackStock, setTrackStock] = useState(!!product.stock)
-    const [stock, setStock] = useState(() => {
-        const parsed = parseStock(product.stock)
-        return parsed || { small: true, medium: true, large: true }
-    })
+    // ── Size system ──
+    const [sizesInput, setSizesInput] = useState('')
+    const [outOfStock, setOutOfStock] = useState([])
 
+    // When product changes, populate the size fields from existing stock
     useEffect(() => {
         if (product) {
             setName(product.name)
@@ -36,11 +34,43 @@ export default function UpdateProduct({ product, show, handleClose }) {
             setBackPic(product.backpic)
             setGender(product.gender || '')
             setCategory(product.category || 'other')
+
+            // Convert stock object back to sizes input and out-of-stock list
             const parsed = parseStock(product.stock)
-            setTrackStock(!!parsed)
-            setStock(parsed || { small: true, medium: true, large: true })
+            if (parsed) {
+                const allSizes = Object.keys(parsed)
+                setSizesInput(allSizes.join(', '))
+                setOutOfStock(allSizes.filter(s => parsed[s] === false))
+            } else {
+                setSizesInput('')
+                setOutOfStock([])
+            }
         }
     }, [product])
+
+    function parseSizes(input) {
+        return input
+            .split(',')
+            .map(s => s.trim())
+            .filter(s => s.length > 0)
+    }
+
+    function buildStock(sizes) {
+        if (sizes.length === 0) return null
+        const stock = {}
+        sizes.forEach(size => {
+            stock[size] = !outOfStock.includes(size)
+        })
+        return stock
+    }
+
+    function toggleOutOfStock(size) {
+        setOutOfStock(prev =>
+            prev.includes(size)
+                ? prev.filter(s => s !== size)
+                : [...prev, size]
+        )
+    }
 
     const uploadToCloudinary = async (file, side) => {
         setUploading(prev => ({ ...prev, [side]: true }))
@@ -76,11 +106,16 @@ export default function UpdateProduct({ product, show, handleClose }) {
             setValidationError('Please fill in every field.')
             return
         }
+        const sizes = parseSizes(sizesInput)
+        if (sizes.length === 0) {
+            setValidationError('Please enter at least one size.')
+            return
+        }
         setValidationError('')
         dispatch(updateProduct({
             id: product.id,
             name, description, amount, pic, backpic, gender, category,
-            stock: trackStock ? stock : null
+            stock: buildStock(sizes)
         }))
         handleClose()
     }
@@ -97,7 +132,7 @@ export default function UpdateProduct({ product, show, handleClose }) {
                 overflow: 'hidden', backgroundColor: url ? 'transparent' : 'var(--jw-cream)'
             }}>
                 <input type="file" accept="image/*" style={{ display: 'none' }}
-                    onChange={(e) => handleFileChange(e, side)} />
+                    onChange={e => handleFileChange(e, side)} />
                 {uploading[side] ? (
                     <div className="d-flex align-items-center justify-content-center h-100">
                         <Spinner animation="border" size="sm" className="me-2" />
@@ -122,6 +157,8 @@ export default function UpdateProduct({ product, show, handleClose }) {
         </div>
     )
 
+    const sizes = parseSizes(sizesInput)
+
     return (
         <Modal show={show} onHide={handleClose} size="lg">
             <Modal.Header closeButton>
@@ -142,18 +179,18 @@ export default function UpdateProduct({ product, show, handleClose }) {
                             <ImageUploadBox label="Back Photo" url={backpic} side="back" />
                         </Col>
                         <Col md={6}>
-                            <Form.Control value={name} onChange={(e) => setName(e.target.value)}
+                            <Form.Control value={name} onChange={e => setName(e.target.value)}
                                 className="mb-3" style={{ borderRadius: 0 }} placeholder="Product name" />
-                            <Form.Control value={description} onChange={(e) => setDescription(e.target.value)}
+                            <Form.Control value={description} onChange={e => setDescription(e.target.value)}
                                 className="mb-3" as="textarea" rows={2} style={{ borderRadius: 0 }} placeholder="Description" />
-                            <Form.Select value={gender} onChange={(e) => setGender(e.target.value)}
+                            <Form.Select value={gender} onChange={e => setGender(e.target.value)}
                                 className="mb-3" style={{ borderRadius: 0 }}>
                                 <option value="">Select Gender</option>
                                 <option value="male">Men</option>
                                 <option value="female">Women</option>
                                 <option value="unisex">Unisex</option>
                             </Form.Select>
-                            <Form.Select value={category} onChange={(e) => setCategory(e.target.value)}
+                            <Form.Select value={category} onChange={e => setCategory(e.target.value)}
                                 className="mb-3" style={{ borderRadius: 0 }}>
                                 <option value="other">Select Category</option>
                                 <option value="T-shirts">T-shirts</option>
@@ -165,65 +202,60 @@ export default function UpdateProduct({ product, show, handleClose }) {
                                 <option value="Skirts">Skirts</option>
                                 <option value="Accessories">Accessories</option>
                             </Form.Select>
-                            <Form.Control value={amount} onChange={(e) => setAmount(e.target.value)}
+                            <Form.Control value={amount} onChange={e => setAmount(e.target.value)}
                                 className="mb-3" type="number" style={{ borderRadius: 0 }} placeholder="Price (₦)" />
 
-                            {/* ── STOCK MANAGEMENT ── */}
+                            {/* ── SIZE SYSTEM ── */}
                             <div style={{ borderTop: '1px solid var(--jw-border)', paddingTop: '16px' }}>
-                                <div className="d-flex justify-content-between align-items-center mb-2">
-                                    <label style={{ fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: '#555', marginBottom: 0 }}>
-                                        Track Stock
-                                    </label>
-                                    {/* Toggle switch */}
-                                    <button type="button" onClick={() => setTrackStock(p => !p)}
-                                        style={{
-                                            width: '44px', height: '24px', borderRadius: '12px', border: 'none',
-                                            backgroundColor: trackStock ? 'var(--jw-gold)' : '#ccc',
-                                            position: 'relative', cursor: 'pointer', transition: 'background-color 0.2s ease'
-                                        }}>
-                                        <span style={{
-                                            position: 'absolute', top: '3px',
-                                            left: trackStock ? '23px' : '3px',
-                                            width: '18px', height: '18px', borderRadius: '50%',
-                                            backgroundColor: '#fff', transition: 'left 0.2s ease'
-                                        }} />
-                                    </button>
-                                </div>
+                                <label style={{ fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: '#555', display: 'block', marginBottom: '6px' }}>
+                                    Sizes Available
+                                </label>
+                                <Form.Control
+                                    value={sizesInput}
+                                    onChange={e => { setSizesInput(e.target.value); setOutOfStock([]) }}
+                                    style={{ borderRadius: 0, marginBottom: '8px' }}
+                                    placeholder='e.g. S, M, L, XL, XXL  or  28, 30, 32, 34'
+                                />
+                                <p style={{ fontSize: '0.65rem', color: '#999', marginBottom: '10px' }}>
+                                    Separate with commas. They appear exactly as typed.
+                                </p>
 
-                                {trackStock && (
+                                {sizes.length > 0 && (
                                     <div>
-                                        <p style={{ fontSize: '0.65rem', color: '#888', marginBottom: '10px', fontFamily: 'Jost, sans-serif' }}>
-                                            Toggle sizes that are available
+                                        <p style={{ fontSize: '0.65rem', letterSpacing: '1px', textTransform: 'uppercase', color: '#555', marginBottom: '8px' }}>
+                                            Tap to mark out of stock
                                         </p>
-                                        <div className="d-flex gap-2">
-                                            {['small', 'medium', 'large'].map(size => (
-                                                <button
-                                                    key={size}
-                                                    type="button"
-                                                    onClick={() => setStock(prev => ({ ...prev, [size]: !prev[size] }))}
-                                                    style={{
-                                                        flex: 1,
-                                                        padding: '10px 4px',
-                                                        border: `2px solid ${stock[size] ? 'var(--jw-gold)' : '#ddd'}`,
-                                                        backgroundColor: stock[size] ? 'var(--jw-gold)' : '#f9f9f9',
-                                                        color: stock[size] ? '#fff' : '#999',
-                                                        fontSize: '0.7rem',
-                                                        letterSpacing: '1px',
-                                                        textTransform: 'uppercase',
-                                                        cursor: 'pointer',
-                                                        borderRadius: 0,
-                                                        transition: 'all 0.2s ease',
-                                                        fontFamily: 'Jost, sans-serif'
-                                                    }}
-                                                >
-                                                    {size[0].toUpperCase()}
-                                                    <br />
-                                                    <span style={{ fontSize: '0.55rem' }}>
-                                                        {stock[size] ? 'In Stock' : 'Sold Out'}
-                                                    </span>
-                                                </button>
-                                            ))}
+                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                                            {sizes.map(size => {
+                                                const oos = outOfStock.includes(size)
+                                                return (
+                                                    <button
+                                                        key={size}
+                                                        type="button"
+                                                        onClick={() => toggleOutOfStock(size)}
+                                                        style={{
+                                                            padding: '8px 14px',
+                                                            border: `2px solid ${oos ? '#dc3545' : 'var(--jw-gold)'}`,
+                                                            background: oos ? '#fff5f5' : 'var(--jw-gold)',
+                                                            color: oos ? '#dc3545' : '#000',
+                                                            fontSize: '0.72rem',
+                                                            fontWeight: 600,
+                                                            letterSpacing: '1px',
+                                                            cursor: 'pointer',
+                                                            borderRadius: 0,
+                                                            fontFamily: 'Jost, sans-serif',
+                                                            textDecoration: oos ? 'line-through' : 'none',
+                                                            transition: 'all 0.15s ease'
+                                                        }}
+                                                    >
+                                                        {size}
+                                                    </button>
+                                                )
+                                            })}
                                         </div>
+                                        <p style={{ fontSize: '0.62rem', color: '#999', marginTop: '6px' }}>
+                                            Yellow = in stock · Red strikethrough = out of stock
+                                        </p>
                                     </div>
                                 )}
                             </div>

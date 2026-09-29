@@ -1,145 +1,165 @@
-import { Card, Button, Modal } from 'react-bootstrap'
+import { Modal, Button } from 'react-bootstrap'
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { addToCart, deleteProduct } from '../features/orders/orderSlice'
 import UpdateProduct from './UpdateProduct'
 import isNewArrival from '../utils/isNewArrival'
-import { useNavigate } from 'react-router-dom'
 import { isProductAvailable, isSizeAvailable, parseStock } from '../utils/stockHelper'
 
 export default function AddOrder({ order, className }) {
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const isAdmin = useSelector((state) => state.orders.isAdmin)
+
     const [showUpdateModal, setShowUpdateModal] = useState(false)
-    const [currentImageIndex, setCurrentImageIndex] = useState(0)
-    const [selectedSize, setSelectedSize] = useState('medium')
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+    const [currentImageIndex, setCurrentImageIndex] = useState(0)
+    const [selectedSize, setSelectedSize] = useState('') // ← empty, user must choose
+    const [addedFeedback, setAddedFeedback] = useState(false)
+    const [imgError, setImgError] = useState(false)
+    const [sizeError, setSizeError] = useState(false)
 
     const stock = parseStock(order.stock)
     const fullyUnavailable = !isProductAvailable(stock)
-    
-    const handleAddToCart = () => {
-        if(!isSizeAvailable(stock,selectedSize)) return
-        dispatch(addToCart({ ...order, size: selectedSize }))
-        window.dispatchEvent(new CustomEvent('showNotification', {
-            detail: { message: `${order.name} (Size : ${selectedSize})added to cart` }
-        }))
-    }
-    
-    
-    const handleDelete = () => {
-        if (isAdmin ) {
-            setShowDeleteConfirm(true)
-        }
-    }
-    const confirmDelete = () => {
-         dispatch(deleteProduct(order.id))
-    window.dispatchEvent(new CustomEvent('showNotification', {
-        detail: { message: `${order.name} deleted.`, type: 'error' }
-    }))
-    setShowDeleteConfirm(false)
-    }
-
     const images = [order.pic, order.backpic].filter(Boolean)
     const isNew = isNewArrival(order.created_at)
+
+    // Get sizes from stock object keys — works for any sizes admin entered
+    const sizes = stock ? Object.keys(stock) : []
+
+    function handleAddToCart() {
+        if (fullyUnavailable) return
+        if (!selectedSize) {
+            setSizeError(true)
+            setTimeout(() => setSizeError(false), 1500)
+            return
+        }
+        if (!isSizeAvailable(stock, selectedSize)) return
+        dispatch(addToCart({ ...order, size: selectedSize }))
+        window.dispatchEvent(new CustomEvent('showNotification', {
+            detail: { message: `${order.name} (${selectedSize}) added to cart` }
+        }))
+        setAddedFeedback(true)
+        setTimeout(() => setAddedFeedback(false), 2000)
+    }
+
+    function confirmDelete() {
+        dispatch(deleteProduct(order.id))
+        window.dispatchEvent(new CustomEvent('showNotification', {
+            detail: { message: `${order.name} deleted.`, type: 'error' }
+        }))
+        setShowDeleteConfirm(false)
+    }
+
     return (
-         <Card className={`product-card ${className || ''}`}>
-            <div className="product-image-container">
-                <Card.Img
-                    variant="top"
-                    src={images[currentImageIndex]}
-                    alt={order.name}
-                    className="product-image"
-                />
-                {isNew && !fullyUnavailable && (
-                    <span className="new-badge">New</span>
-                )}
-                {fullyUnavailable && (
-                    <span className="sold-out-badge">Sold Out</span>
-                )}
-                {images.length > 1 && (
-                    <div className="image-indicators">
-                        {images.map((_, index) => (
-                            <button
-                                key={index}
-                                className={`indicator ${currentImageIndex === index ? 'active' : ''}`}
-                                onClick={() => setCurrentImageIndex(index)}
-                            />
-                        ))}
-                    </div>
-                )}
-            </div>
+        <>
+            <div className={`product-card-wrap ${className || ''}`}>
 
-            <Card.Body className="d-flex flex-column">
-                <Card.Title
-                    className="product-name"
-                    onClick={() => navigate(`/product/${order.id}`)}
-                    style={{ cursor: 'pointer' }}
-                >
-                    {order.name}
-                </Card.Title>
-                <Card.Text className="product-price mb-2">
-                    ₦{Number(order.amount).toLocaleString()}
-                </Card.Text>
-                <Card.Text className="product-description small mb-3">
-                    {order.description}
-                </Card.Text>
+                {/* ── IMAGE ── */}
+                <div className="product-image-container"
+                    onClick={() => navigate(`/product/${order.id}`)}>
+                    {images.length > 0 && !imgError ? (
+                        <img
+                            src={images[currentImageIndex]}
+                            alt={order.name}
+                            className="product-image"
+                            onError={() => setImgError(true)}
+                        />
+                    ) : (
+                        <div style={{
+                            display: 'flex', flexDirection: 'column',
+                            alignItems: 'center', justifyContent: 'center',
+                            height: '100%', color: '#ccc', gap: '6px'
+                        }}>
+                            <i className="bi bi-image" style={{ fontSize: '2rem' }}></i>
+                            <span style={{ fontSize: '0.6rem', letterSpacing: '1px' }}>No image</span>
+                        </div>
+                    )}
 
-                {/* Size selector */}
-                <div className="mb-3">
-                    <label className="form-label" style={{ fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase', color: '#555' }}>
-                        Size
-                    </label>
-                    <div className="btn-group w-100" role="group">
-                        {['small', 'medium', 'large'].map((size) => {
-                            const available = isSizeAvailable(stock, size)
-                            return (
-                                <button
-                                    key={size}
-                                    type="button"
-                                    disabled={!available}
-                                    className={`btn btn-outline-dark ${selectedSize === size && available ? 'active' : ''}`}
-                                    style={{
-                                        opacity: available ? 1 : 0.35,
-                                        cursor: available ? 'pointer' : 'not-allowed',
-                                        fontSize: '0.72rem',
-                                        letterSpacing: '1px',
-                                        textDecoration: !available ? 'line-through' : 'none',
-                                        position: 'relative'
-                                    }}
-                                    onClick={() => available && setSelectedSize(size)}
-                                >
-                                    {size[0].toUpperCase()}
-                                </button>
-                            )
-                        })}
-                    </div>
-                </div>
+                    {isNew && !fullyUnavailable && <span className="new-badge">New</span>}
+                    {fullyUnavailable && <span className="sold-out-badge">Sold Out</span>}
 
-                <div className="mt-auto d-flex justify-content-between align-items-center">
-                    <Button
-                        variant="outline-dark"
-                        size="sm"
-                        onClick={handleAddToCart}
-                        disabled={fullyUnavailable || !isSizeAvailable(stock, selectedSize)}
-                        style={{ fontSize: '0.72rem', letterSpacing: '1px' }}
-                    >
-                        {fullyUnavailable ? 'Sold Out' : 'Add to Cart'}
-                    </Button>
+                    {images.length > 1 && (
+                        <div className="image-indicators">
+                            {images.map((_, i) => (
+                                <button key={i}
+                                    className={`indicator ${currentImageIndex === i ? 'active' : ''}`}
+                                    onClick={e => { e.stopPropagation(); setCurrentImageIndex(i) }}
+                                />
+                            ))}
+                        </div>
+                    )}
 
                     {isAdmin && (
-                        <div>
-                            <Button variant="outline-danger" size="sm" className="me-2" onClick={handleDelete}>
-                                Delete
-                            </Button>
-                            <Button variant="outline-secondary" size="sm" onClick={() => setShowUpdateModal(true)}>
-                                Edit
-                            </Button>
+                        <div onClick={e => e.stopPropagation()}
+                            style={{ position: 'absolute', top: '8px', right: '8px', display: 'flex', gap: '4px', zIndex: 3 }}>
+                            <button onClick={() => setShowUpdateModal(true)}
+                                style={{ width: '26px', height: '26px', background: 'rgba(255,255,255,0.9)', border: 'none', borderRadius: '50%', cursor: 'pointer', fontSize: '0.65rem', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#333' }}>
+                                <i className="bi bi-pencil"></i>
+                            </button>
+                            <button onClick={() => setShowDeleteConfirm(true)}
+                                style={{ width: '26px', height: '26px', background: 'rgba(255,255,255,0.9)', border: 'none', borderRadius: '50%', cursor: 'pointer', fontSize: '0.65rem', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#dc3545' }}>
+                                <i className="bi bi-trash"></i>
+                            </button>
                         </div>
                     )}
                 </div>
-            </Card.Body>
+
+                {/* ── INFO BLOCK ── */}
+                <div className="product-info-block">
+                    <p className="product-name" onClick={() => navigate(`/product/${order.id}`)}>
+                        {order.name}
+                    </p>
+                    <p className="product-price">
+                        ₦{Number(order.amount).toLocaleString()}
+                    </p>
+
+                    {/* Dynamic size row — reads from stock keys */}
+                    {sizes.length > 0 && (
+                        <div className="size-row">
+                            {sizes.map(size => {
+                                const available = isSizeAvailable(stock, size)
+                                const isSelected = selectedSize === size && available
+                                return (
+                                    <button
+                                        key={size}
+                                        className={`size-pill ${isSelected ? 'selected' : ''} ${!available ? 'unavailable' : ''}`}
+                                        disabled={!available}
+                                        onClick={() => {
+                                            if (available) {
+                                                setSelectedSize(size)
+                                                setSizeError(false)
+                                            }
+                                        }}
+                                        style={{
+                                            // Highlight in red briefly if user clicks add without selecting
+                                            outline: sizeError && !selectedSize ? '1.5px solid #dc3545' : 'none'
+                                        }}
+                                    >
+                                        {size}
+                                    </button>
+                                )
+                            })}
+                        </div>
+                    )}
+
+                    <button
+                        className={`atc-btn ${addedFeedback ? 'added' : ''} ${fullyUnavailable ? 'sold' : ''}`}
+                        onClick={handleAddToCart}
+                        disabled={fullyUnavailable}
+                    >
+                        {fullyUnavailable
+                            ? 'Sold Out'
+                            : addedFeedback
+                                ? '✓ Added'
+                                : selectedSize
+                                    ? `Add to Cart`
+                                    : 'Select Size'
+                        }
+                    </button>
+                </div>
+            </div>
 
             {isAdmin && (
                 <UpdateProduct
@@ -151,11 +171,17 @@ export default function AddOrder({ order, className }) {
 
             <Modal show={showDeleteConfirm} onHide={() => setShowDeleteConfirm(false)} centered size="sm">
                 <Modal.Body className="text-center p-4">
-                    <p className="mb-3">Delete <strong>{order.name}</strong>?</p>
-                    <Button variant="danger" size="sm" className="me-2" onClick={confirmDelete}>Delete</Button>
-                    <Button variant="outline-secondary" size="sm" onClick={() => setShowDeleteConfirm(false)}>Cancel</Button>
+                    <i className="bi bi-trash" style={{ fontSize: '1.5rem', color: '#dc3545', display: 'block', marginBottom: '12px' }}></i>
+                    <p style={{ fontWeight: 500, marginBottom: '4px' }}>Delete product?</p>
+                    <p className="text-muted mb-4" style={{ fontSize: '0.8rem' }}>
+                        <strong>{order.name}</strong> will be permanently removed.
+                    </p>
+                    <div className="d-flex gap-2 justify-content-center">
+                        <Button variant="danger" size="sm" style={{ borderRadius: 0 }} onClick={confirmDelete}>Delete</Button>
+                        <Button variant="outline-secondary" size="sm" style={{ borderRadius: 0 }} onClick={() => setShowDeleteConfirm(false)}>Cancel</Button>
+                    </div>
                 </Modal.Body>
             </Modal>
-        </Card>
+        </>
     )
 }
