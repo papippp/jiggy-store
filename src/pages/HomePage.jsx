@@ -31,7 +31,7 @@ const FALLBACK_SLIDES = [
         cta_path: '/women'
     }
 ]
-
+//homepage
 export default function HomePage() {
     const [show, setShow] = useState(false)
     const userEmail = useSelector((state) => state.orders.userEmail)
